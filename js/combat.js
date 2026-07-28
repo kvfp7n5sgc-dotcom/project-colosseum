@@ -1,1 +1,34 @@
-function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}function rollRarity(){const r=Math.random();return r<.03?"legendary":r<.10?"epic":r<.30?"rare":"common"}function createLootItem(drop){const rarity=rollRarity(),rd=GAME_DATA.rarities[rarity],base=randomInt(drop.power[0],drop.power[1]);return makeItem(drop.name,drop.slot,drop.type,Math.max(1,Math.round(base*rd.multiplier)),100,rarity)}function runCombat(s,e){if(s.energy<1)return{title:"Brak Wytrzymałości",summary:"Poczekaj chwilę na regenerację.",log:[]};s.energy--;s.lastEnergyTick=Date.now();s.hp=s.maxHp;let eh=e.hp,log=[],round=1;while(s.hp>0&&eh>0&&round<=20){let dmg=playerAttack(s),crit=Math.random()<Math.min(.25,s.stats.luck*.015);if(crit)dmg*=2;eh-=dmg;log.push(`Runda ${round}: zadajesz ${dmg} obrażeń${crit?" — cios krytyczny":""}.`);if(eh<=0)break;if(Math.random()<Math.min(.30,s.stats.dexterity*.012))log.push(`${e.name} atakuje, ale unikasz ciosu.`);else{const inc=Math.max(1,e.attack+randomInt(-2,2)-playerDefense(s));s.hp-=inc;log.push(`${e.name} zadaje ci ${inc} obrażeń.`)}round++}damageEquipment(s);if(s.hp>0){const gold=randomInt(e.gold[0],e.gold[1]);s.gold+=gold;s.xp+=e.xp;s.chronicle.unshift(`Pokonałeś przeciwnika: ${e.name}.`);const found=[];e.drops.forEach(d=>{if(Math.random()<d.chance){const i=createLootItem(d);s.inventory.push(i);found.push(i);s.chronicle.unshift(`Zdobyłeś ${i.rarityName.toLowerCase()} przedmiot „${i.name}”.`)}});applyLevelUps(s);return{title:"Zwycięstwo",summary:`Zdobywasz ${e.xp} XP i ${gold} złota.${found.length?` Zdobyto: ${found.map(i=>`${i.rarityName} ${i.name}`).join(", ")}.`:" Brak dodatkowego łupu."}`,log}}s.hp=Math.ceil(s.maxHp*.35);s.chronicle.unshift(`Zostałeś pokonany przez: ${e.name}.`);return{title:"Porażka",summary:"Wracasz do Vallis ciężko ranny, ale zachowujesz przedmioty.",log}}
+function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function rollRarity(){const r=Math.random();if(r<.03)return"legendary";if(r<.10)return"epic";if(r<.30)return"rare";return"common";}
+function createLootItem(drop){
+  const rarity=drop.forcedRarity||rollRarity(),rd=GAME_DATA.rarities[rarity],base=randomInt(drop.power[0],drop.power[1]);
+  return {id:makeId(),name:drop.name,slot:drop.slot,type:drop.type,rarity,rarityName:rd.name,color:rd.color,power:Math.max(1,Math.round(base*rd.multiplier)),durability:100,kind:drop.slot?"equipment":"trophy"};
+}
+function addItemToInventory(state,item){
+  if(state.inventory.length>=GAME_DATA.inventoryLimit)return false;
+  state.inventory.push(item);return true;
+}
+function runCombat(state,enemy){
+  if(state.energy<1)return{ok:false,title:"Brak Wytrzymałości",summary:"Poczekaj chwilę na regenerację.",log:[]};
+  state.energy--;state.lastEnergyTick=Date.now();state.hp=state.maxHp;
+  let enemyHp=enemy.hp,round=1;const log=[];
+  while(state.hp>0&&enemyHp>0&&round<=30){
+    let damage=playerAttack(state);const crit=Math.random()<Math.min(.25,state.stats.luck*.015);if(crit)damage*=2;
+    enemyHp-=damage;log.push(`Runda ${round}: zadajesz ${damage} obrażeń${crit?" — cios krytyczny":""}.`);if(enemyHp<=0)break;
+    if(Math.random()<Math.min(.30,state.stats.dexterity*.012)){log.push(`${enemy.name} atakuje, ale unikasz ciosu.`);}
+    else{const incoming=Math.max(1,enemy.attack+randomInt(-2,2)-playerDefense(state));state.hp-=incoming;log.push(`${enemy.name} zadaje ci ${incoming} obrażeń.`);}
+    round++;
+  }
+  damageEquipment(state);
+  if(state.hp>0){
+    const gold=randomInt(enemy.gold[0],enemy.gold[1]);state.gold+=gold;state.xp+=enemy.xp;state.kills[enemy.id]=(state.kills[enemy.id]||0)+1;
+    state.chronicle.unshift(`Pokonałeś przeciwnika: ${enemy.name}.`);
+    const found=[];
+    enemy.drops.forEach(drop=>{if(Math.random()<drop.chance){const item=createLootItem(drop);if(addItemToInventory(state,item)){found.push(item);state.chronicle.unshift(`Zdobyłeś ${item.rarityName.toLowerCase()} przedmiot „${item.name}”.`);}}});
+    applyLevelUps(state);
+    const lootText=found.length?` Zdobyto: ${found.map(i=>`${i.rarityName} ${i.name}`).join(", ")}.`:(state.inventory.length>=GAME_DATA.inventoryLimit?" Plecak jest pełny.":" Brak dodatkowego łupu.");
+    return{ok:true,title:enemy.boss?"Boss pokonany":"Zwycięstwo",summary:`Zdobywasz ${enemy.xp} XP i ${gold} złota.${lootText}`,log};
+  }
+  state.hp=Math.ceil(state.maxHp*.35);state.chronicle.unshift(`Zostałeś pokonany przez: ${enemy.name}.`);
+  return{ok:true,title:"Porażka",summary:"Wracasz do Vallis ciężko ranny, ale zachowujesz przedmioty.",log};
+}
