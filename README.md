@@ -1,5 +1,21 @@
-# Project Colosseum v0.2.0
+# Project Colosseum v0.3.0
 
-Nowości: regeneracja 1 punktu Wytrzymałości co sekundę, rzadkości łupów, kolory, zakładanie wyposażenia, porównywanie mocy, sprzedaż zależna od rzadkości i migracja starego zapisu.
+Pełna aktualizacja prototypu.
 
-Struktura: `index.html`, `css/style.css`, `js/data.js`, `js/save.js`, `js/player.js`, `js/combat.js`, `js/game.js`.
+## Dodane
+- mapa świata i wybór regionów
+- odblokowywanie regionów poziomem
+- zadania Marcusa Varro
+- boss Fenrir
+- sklep Lydii
+- mikstury leczenia, energii i obrażeń
+- limit plecaka 30 miejsc
+- filtrowanie i sortowanie plecaka
+- sprzedaż wszystkich trofeów
+- ulepszanie wyposażenia u kowala
+- dialogi NPC
+- aktywne efekty czasowe
+- zachowanie i migracja zapisu z poprzedniej wersji
+
+## Instalacja
+Zastąp pliki w repozytorium zawartością tej paczki, zachowując strukturę folderów.
