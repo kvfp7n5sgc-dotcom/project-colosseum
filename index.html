@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.3.0</title>
+  <title>Project Colosseum v0.4.0</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -56,15 +56,15 @@
 
         <div class="npc-strip">
           <button class="npc-card" data-dialogue="marcus">
-            <div class="npc-avatar">MV</div>
+            <img class="npc-portrait" src="assets/npcs/marcus_varro.webp" alt="Marcus Varro">
             <div><strong>Marcus Varro</strong><span>Mentor i dawny gladiator</span></div>
           </button>
           <button class="npc-card" data-dialogue="lydia">
-            <div class="npc-avatar">L</div>
+            <img class="npc-portrait" src="assets/npcs/lydia.webp" alt="Lydia">
             <div><strong>Lydia</strong><span>Kupczyni z Południa</span></div>
           </button>
           <button class="npc-card" data-dialogue="brenn">
-            <div class="npc-avatar">B</div>
+            <img class="npc-portrait" src="assets/npcs/brenn.webp" alt="Brenn">
             <div><strong>Brenn</strong><span>Kowal Domu Żelaza</span></div>
           </button>
         </div>
@@ -196,13 +196,13 @@
     <div id="dialogueModal" class="modal hidden">
       <div class="modal-card">
         <button id="closeDialogue" class="modal-close">×</button>
-        <p class="eyebrow" id="dialogueRole"></p>
+        <img id="dialogueImage" class="dialogue-image" alt=""><p class="eyebrow" id="dialogueRole"></p>
         <h2 id="dialogueName"></h2>
         <p id="dialogueText"></p>
       </div>
     </div>
 
-    <footer>Project Colosseum v0.3.0 — prototyp testowy</footer>
+    <footer>Project Colosseum v0.4.0 — prototyp testowy</footer>
   </div>
 
   <script src="js/data.js"></script>

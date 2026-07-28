@@ -1,4 +1,4 @@
-# Project Colosseum v0.3.0
+# Project Colosseum v0.4.0 — Graphics Pack
 
 Pełna aktualizacja prototypu.
 
@@ -19,3 +19,7 @@ Pełna aktualizacja prototypu.
 
 ## Instalacja
 Zastąp pliki w repozytorium zawartością tej paczki, zachowując strukturę folderów.
+
+
+## Pakiet graficzny
+Dodano osobne tła, portrety NPC, potwory, ikony przedmiotów, mikstury i elementy UI. Wszystko jest już podłączone do gry.
