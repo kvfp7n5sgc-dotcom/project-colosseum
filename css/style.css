@@ -49,3 +49,19 @@ select{background:#211911;color:var(--text);border:1px solid var(--border);borde
   .location-grid,.inventory-grid,.enemy-grid,.two-col,.quest-grid,.shop-grid,.npc-strip,.world-map{grid-template-columns:1fr}
   .equipment-grid{grid-template-columns:1fr 1fr}.inventory-head{align-items:stretch;flex-direction:column}
 }
+
+/* v0.4 graphics */
+.hero-panel{background:linear-gradient(180deg,rgba(10,7,4,.08),rgba(10,7,4,.92)),url("../assets/backgrounds/vallis.webp") center/cover no-repeat;min-height:260px}
+.world-node:nth-child(1){background:linear-gradient(180deg,rgba(15,10,7,.25),rgba(15,10,7,.92)),url("../assets/backgrounds/vallis.webp") center/cover}
+.world-node:nth-child(2){background:linear-gradient(180deg,rgba(15,10,7,.25),rgba(15,10,7,.92)),url("../assets/backgrounds/forest.webp") center/cover}
+.world-node:nth-child(3){background:linear-gradient(180deg,rgba(15,10,7,.25),rgba(15,10,7,.92)),url("../assets/backgrounds/ruins.webp") center/cover}
+.world-node:nth-child(4){background:linear-gradient(180deg,rgba(15,10,7,.25),rgba(15,10,7,.92)),url("../assets/backgrounds/mine.webp") center/cover}
+.npc-portrait{width:58px;height:68px;object-fit:cover;object-position:center top;border-radius:9px;border:1px solid #8c662a;flex:0 0 auto}
+.enemy-image{width:100%;height:190px;object-fit:cover;object-position:center top;border-radius:9px;margin-bottom:12px;border:1px solid #604625}
+.item-image{width:72px;height:72px;object-fit:cover;float:left;margin:0 12px 8px 0;border-radius:9px;border:1px solid #6f5128;background:#0c0906}
+.inventory-card{min-height:150px;overflow:hidden}
+.dialogue-image{width:150px;height:190px;object-fit:cover;object-position:center top;float:left;margin:0 18px 10px 0;border-radius:10px;border:1px solid #8c662a}
+.modal-card{min-height:250px}
+.blacksmith-panel{background:linear-gradient(90deg,rgba(20,13,8,.94),rgba(20,13,8,.70)),url("../assets/backgrounds/forge.webp") center/cover}
+#view-merchant>.two-col>.panel:first-child{background:linear-gradient(180deg,rgba(20,13,8,.82),rgba(20,13,8,.96)),url("../assets/backgrounds/market.webp") center/cover}
+@media(max-width:760px){.enemy-image{height:220px}.dialogue-image{width:110px;height:150px}}
