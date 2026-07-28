@@ -21,6 +21,19 @@ function renderEquipment(){
   $("equipmentList").innerHTML=Object.entries(state.equipment).map(([slot,item])=>`<div class="equipment-slot"><strong>${GAME_DATA.equipmentLabels[slot]}</strong><br>${item?`<span class="${rarityClass(item.rarity)}">${item.rarityName} ${item.name}</span><br><span>Moc: ${item.power} · Trwałość: ${item.durability}%</span>`:`<span>Puste miejsce</span>`}</div>`).join("");
 }
 function itemSellPrice(item){const r=GAME_DATA.rarities[item.rarity]||GAME_DATA.rarities.common;return Math.max(1,Math.round((item.power||1)*5*r.sellMultiplier));}
+function itemImage(item){
+ if(item.kind==="consumable"){
+  if(item.effect==="heal")return"assets/items/potion_health.webp";
+  if(item.effect==="energy")return"assets/items/potion_energy.webp";
+  if(item.effect==="damageBuff")return"assets/items/potion_damage.webp";
+ }
+ const r=item.rarity||"common";
+ if(item.slot==="weapon")return`assets/items/sword_${r}.webp`;
+ if(item.slot==="helmet")return`assets/items/helmet_${r}.webp`;
+ if(item.slot==="armor")return`assets/items/armor_${r}.webp`;
+ if(item.slot==="shield")return`assets/items/shield_${r}.webp`;
+ return"assets/ui/game_icon.webp";
+}
 function filteredInventory(){
   const filter=$("inventoryFilter")?.value||"all",sort=$("inventorySort")?.value||"newest";let arr=state.inventory.map((item,index)=>({item,index}));
   if(filter!=="all")arr=arr.filter(x=>filter==="consumable"?x.item.kind==="consumable":filter==="trophy"?x.item.kind==="trophy":x.item.slot===filter);
@@ -33,7 +46,7 @@ function renderInventory(){
   $("inventoryCount").textContent=`${state.inventory.length}/${GAME_DATA.inventoryLimit}`;
   const arr=filteredInventory();if(!arr.length){$("inventoryList").innerHTML=`<p class="small">Brak przedmiotów w tej kategorii.</p>`;return;}
   $("inventoryList").innerHTML=arr.map(({item,index})=>{const eq=item.slot?state.equipment[item.slot]:null,diff=item.slot?item.power-(eq?.power||0):null;
-    return`<article class="inventory-card"><strong class="${rarityClass(item.rarity)}">${item.rarityName||"Zwykły"} ${item.name}</strong><p class="small">${item.type} · Moc ${item.power||0} · Trwałość ${item.durability??100}%</p>${item.slot?`<p class="comparison ${diff>0?"good":diff<0?"bad":""}">${eq?`Założone: ${eq.power} · `:"Puste miejsce · "}Zmiana: ${diff>0?"+":""}${diff}</p>`:""}<div class="item-actions">${item.slot?`<button class="item-btn primary" data-equip="${index}">Załóż</button>`:""}${item.kind==="consumable"?`<button class="item-btn primary" data-use="${index}">Użyj</button>`:""}<button class="item-btn" data-sell="${index}">Sprzedaj za ${itemSellPrice(item)} złota</button></div></article>`;}).join("");
+    return`<article class="inventory-card"><img class="item-image" src="${itemImage(item)}" alt="${item.name}"><strong class="${rarityClass(item.rarity)}">${item.rarityName||"Zwykły"} ${item.name}</strong><p class="small">${item.type} · Moc ${item.power||0} · Trwałość ${item.durability??100}%</p>${item.slot?`<p class="comparison ${diff>0?"good":diff<0?"bad":""}">${eq?`Założone: ${eq.power} · `:"Puste miejsce · "}Zmiana: ${diff>0?"+":""}${diff}</p>`:""}<div class="item-actions">${item.slot?`<button class="item-btn primary" data-equip="${index}">Załóż</button>`:""}${item.kind==="consumable"?`<button class="item-btn primary" data-use="${index}">Użyj</button>`:""}<button class="item-btn" data-sell="${index}">Sprzedaj za ${itemSellPrice(item)} złota</button></div></article>`;}).join("");
   document.querySelectorAll("[data-equip]").forEach(b=>b.onclick=()=>equipItem(+b.dataset.equip));document.querySelectorAll("[data-use]").forEach(b=>b.onclick=()=>useItem(+b.dataset.use));document.querySelectorAll("[data-sell]").forEach(b=>b.onclick=()=>sellItem(+b.dataset.sell));
 }
 function equipItem(index){const item=state.inventory[index];if(!item?.slot)return;const prev=state.equipment[item.slot];state.equipment[item.slot]=item;state.inventory.splice(index,1);if(prev)state.inventory.push(prev);state.chronicle.unshift(`Założyłeś ${item.rarityName.toLowerCase()} przedmiot „${item.name}”.`);persistAndRender();}
@@ -56,7 +69,7 @@ function renderChronicle(){$("chronicleList").innerHTML=state.chronicle.map((e,i
 function repairAll(){const d=Object.values(state.equipment).some(i=>i&&i.durability<100);if(!d){$("repairStatus").textContent="Cały ekwipunek jest już naprawiony.";return;}if(state.gold<20){$("repairStatus").textContent="Masz za mało złota.";return;}state.gold-=20;Object.values(state.equipment).forEach(i=>{if(i)i.durability=100;});state.chronicle.unshift("Brenn naprawił cały twój ekwipunek.");$("repairStatus").textContent="Ekwipunek naprawiony.";persistAndRender();}
 function upgradeWeakest(){if(state.gold<60){$("repairStatus").textContent="Masz za mało złota.";return;}const items=Object.values(state.equipment).filter(Boolean);if(!items.length)return;const item=items.sort((a,b)=>a.power-b.power)[0];state.gold-=60;item.power+=1;state.chronicle.unshift(`Brenn ulepszył przedmiot „${item.name}” do mocy ${item.power}.`);$("repairStatus").textContent=`Ulepszono: ${item.name}.`;persistAndRender();}
 function processEnergyRegeneration(){if(state.energy>=state.maxEnergy){state.lastEnergyTick=Date.now();return;}const now=Date.now(),points=Math.floor((now-state.lastEnergyTick)/GAME_DATA.energyRegenMs);if(points>0){state.energy=Math.min(state.maxEnergy,state.energy+points);state.lastEnergyTick+=points*GAME_DATA.energyRegenMs;saveGame(state);renderHeader();}}
-function openDialogue(id){const d=GAME_DATA.dialogues[id];if(!d)return;$("dialogueRole").textContent=d.role;$("dialogueName").textContent=d.name;$("dialogueText").textContent=d.text;$("dialogueModal").classList.remove("hidden");}
+function openDialogue(id){const d=GAME_DATA.dialogues[id];if(!d)return;$("dialogueImage").src=d.image||"";$("dialogueImage").alt=d.name;$("dialogueRole").textContent=d.role;$("dialogueName").textContent=d.name;$("dialogueText").textContent=d.text;$("dialogueModal").classList.remove("hidden");}
 function persistAndRender(){saveGame(state);renderAll();}
 function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderChronicle();}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));

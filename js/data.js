@@ -1,5 +1,5 @@
 const GAME_DATA = {
-  version:"0.3.0",
+  version:"0.4.0",
   energyRegenMs:1000,
   inventoryLimit:30,
 
@@ -18,23 +18,23 @@ const GAME_DATA = {
   ],
 
   enemies:[
-    {id:"dog",region:"outskirts",name:"Bezpański pies",hp:28,attack:5,xp:12,gold:[4,8],danger:"Niski",boss:false,drops:[
+    {id:"dog",image:"assets/monsters/dog.webp",region:"outskirts",name:"Bezpański pies",hp:28,attack:5,xp:12,gold:[4,8],danger:"Niski",boss:false,drops:[
       {name:"Skórzany Pas",slot:null,type:"Trofeum",chance:.22,power:[1,2]},
       {name:"Drewniana Tarcza",slot:"shield",type:"Tarcza",chance:.08,power:[1,2]}
     ]},
-    {id:"bandit",region:"outskirts",name:"Leśny rabuś",hp:46,attack:8,xp:20,gold:[8,15],danger:"Średni",boss:false,drops:[
+    {id:"bandit",image:"assets/monsters/bandit.webp",region:"outskirts",name:"Leśny rabuś",hp:46,attack:8,xp:20,gold:[8,15],danger:"Średni",boss:false,drops:[
       {name:"Nóż Rabusia",slot:"weapon",type:"Broń",chance:.20,power:[2,4]},
       {name:"Skórzany Kaftan",slot:"armor",type:"Pancerz",chance:.12,power:[2,4]}
     ]},
-    {id:"wolf",region:"forest",name:"Wilk z Lasu Cieni",hp:65,attack:11,xp:32,gold:[12,22],danger:"Wysoki",boss:false,drops:[
+    {id:"wolf",image:"assets/monsters/wolf.webp",region:"forest",name:"Wilk z Lasu Cieni",hp:65,attack:11,xp:32,gold:[12,22],danger:"Wysoki",boss:false,drops:[
       {name:"Kieł Wilka",slot:null,type:"Trofeum",chance:.30,power:[2,5]},
       {name:"Skórzany Hełm",slot:"helmet",type:"Hełm",chance:.14,power:[2,4]}
     ]},
-    {id:"fenrir",region:"forest",name:"Fenrir — Alfa Lasu Cieni",hp:160,attack:20,xp:110,gold:[55,90],danger:"Boss",boss:true,drops:[
+    {id:"fenrir",image:"assets/monsters/fenrir.webp",region:"forest",name:"Fenrir — Alfa Lasu Cieni",hp:160,attack:20,xp:110,gold:[55,90],danger:"Boss",boss:true,drops:[
       {name:"Kieł Fenrira",slot:"weapon",type:"Broń",chance:1,power:[8,11],forcedRarity:"rare"},
       {name:"Wilcza Skóra",slot:"armor",type:"Pancerz",chance:.35,power:[6,9]}
     ]},
-    {id:"deserter",region:"ruins",name:"Weteran dezerter",hp:88,attack:14,xp:48,gold:[20,35],danger:"Bardzo wysoki",boss:false,drops:[
+    {id:"deserter",image:"assets/monsters/deserter.webp",region:"ruins",name:"Weteran dezerter",hp:88,attack:14,xp:48,gold:[20,35],danger:"Bardzo wysoki",boss:false,drops:[
       {name:"Żelazny Gladius",slot:"weapon",type:"Broń",chance:.22,power:[4,7]},
       {name:"Pancerz Dezertera",slot:"armor",type:"Pancerz",chance:.15,power:[4,7]},
       {name:"Hełm Legionisty",slot:"helmet",type:"Hełm",chance:.12,power:[3,6]},
@@ -56,9 +56,9 @@ const GAME_DATA = {
   ],
 
   dialogues:{
-    marcus:{role:"MENTOR",name:"Marcus Varro",text:"Siła bez dyscypliny jest tylko hałasem. Wykonuj moje zadania, a nauczę cię przeżyć na arenie."},
-    lydia:{role:"KUPIEC",name:"Lydia",text:"Złoto nie ma zapachu, ale strach pachnie z daleka. Kup mikstury, zanim poczujesz go na sobie."},
-    brenn:{role:"KOWAL",name:"Brenn",text:"Przynieś mi złoto i zniszczoną stal. Z jednego zrobię mniej, z drugiego więcej."}
+    marcus:{image:"assets/npcs/marcus_varro.webp",role:"MENTOR",name:"Marcus Varro",text:"Siła bez dyscypliny jest tylko hałasem. Wykonuj moje zadania, a nauczę cię przeżyć na arenie."},
+    lydia:{image:"assets/npcs/lydia.webp",role:"KUPIEC",name:"Lydia",text:"Złoto nie ma zapachu, ale strach pachnie z daleka. Kup mikstury, zanim poczujesz go na sobie."},
+    brenn:{image:"assets/npcs/brenn.webp",role:"KOWAL",name:"Brenn",text:"Przynieś mi złoto i zniszczoną stal. Z jednego zrobię mniej, z drugiego więcej."}
   },
 
   statLabels:{strength:"Siła",endurance:"Wytrzymałość",dexterity:"Zręczność",cunning:"Spryt",luck:"Szczęście"},
