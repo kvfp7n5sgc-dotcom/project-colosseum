@@ -1,16 +1,15 @@
-PROJECT COLOSSEUM v0.14.0 — CZĘŚĆ 1: WYPRAWY
+PROJECT COLOSSEUM v0.14.1 — NAPRAWA WYPRAW
 
 Podmień:
 - index.html
-- css/
-- js/
+- folder js/
 
-Nie usuwaj folderu assets/ z poprzedniej wersji.
+Folderów assets/ i css/ nie trzeba podmieniać.
 
-Dodano:
-- jeden kontynent z 7 kolorowymi lokacjami,
-- 4 unikalnych przeciwników i 1 boss w każdej lokacji,
-- 35 indywidualnych portretów-symboli bez powtarzanego Minotaura,
-- odblokowanie bossa po 10 zwycięstwach i pokonaniu każdego zwykłego wroga,
-- działające walki, nagrody, XP, złoto i zapis postępu,
-- pełną obsługę telefonu.
+Naprawiono:
+- otwieranie zakładki Wyprawy na iPhone/Safari,
+- powrót strony z pamięci podręcznej,
+- wymuszone renderowanie mapy 7 lokacji i przeciwników,
+- cache-busting skryptów GitHub Pages.
+
+Po wysłaniu na GitHub odśwież stronę lub zamknij kartę Safari i otwórz ją ponownie.
