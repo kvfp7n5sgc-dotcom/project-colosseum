@@ -1,18 +1,20 @@
-# Project Colosseum v0.7.0 — zawartość i bestiariusz
+# Project Colosseum v0.8.0
 
-Pierwsza część dużej aktualizacji świata.
+## Nowości
+- przebudowany, statyczny plan miasta Vallis z 8 klikalnymi budynkami,
+- nowy Dom Aukcyjny z filtrowaniem, sortowaniem i losowymi ofertami,
+- zakup przedmiotów z aukcji do plecaka,
+- rozbudowana kuźnia,
+- wybór konkretnego założonego przedmiotu,
+- ulepszanie od +0 do +20,
+- koszt i szansa powodzenia zależne od poziomu ulepszenia,
+- nieudane ulepszenie nie niszczy przedmiotu, tylko obniża trwałość,
+- naprawa ekwipunku z kosztem zależnym od uszkodzeń,
+- zachowana Stara Kopalnia, wszystkie wyprawy, Bestiariusz i profil GM,
+- usunięty przycisk dźwięku miasta i wyłączone animacje miasta.
 
-## Dodano
-- 16 nowych przeciwników.
-- 4 nowe regiony: Katakumby Vallis, Obóz Czerwonych Szakali, Czarne Bagna i Lodowa Jaskinia.
-- 4 nowych bossów.
-- Osobne ikony wszystkich 25 przeciwników.
-- Bestiariusz odblokowujący wpisy po pierwszym zwycięstwie.
-- Typy potworów, opisy, statystyki, listy łupów i licznik zwycięstw.
-- 4 nowe zadania na bossów.
-- Stara Kopalnia i profil Game Master pozostają aktywne.
-
-## Profil GM
+## Profil Game Master
 Kod: `COLOSSEUM-GM`
 
-Profil GM pokazuje od razu cały bestiariusz i odblokowuje wszystkie regiony.
+## Ważne
+Wgraj całą zawartość ZIP-a, aby pliki HTML, CSS i JavaScript miały zgodną wersję.

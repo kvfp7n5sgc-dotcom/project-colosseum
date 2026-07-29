@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.7.0</title>
+  <title>Project Colosseum v0.8.0</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -45,6 +45,7 @@
       <button class="nav-btn" data-view="merchant">Kupiec</button>
       <button class="nav-btn" data-view="character">Postać</button>
       <button class="nav-btn" data-view="blacksmith">Kowal</button>
+      <button class="nav-btn" data-view="auction">Aukcje</button>
       <button class="nav-btn" data-view="bestiary">Bestiariusz</button>
       <button class="nav-btn" data-view="chronicle">Kronika</button>
       <button id="gmNavBtn" class="nav-btn gm-only hidden" data-view="gm">GM</button>
@@ -52,42 +53,53 @@
 
     <main>
       <section id="view-city" class="view active">
-        <div class="city-scene" aria-label="Interaktywna panorama miasta Vallis">
-          <div class="city-sky-glow"></div>
-          <div class="city-smoke smoke-one"></div>
-          <div class="city-smoke smoke-two"></div>
-          <div class="city-banner banner-one"></div>
-          <div class="city-banner banner-two"></div>
-
+        <div class="city-scene vallis-isometric" aria-label="Interaktywne miasto Vallis">
           <div class="city-title-card">
             <p class="eyebrow">MIASTO STARTOWE</p>
             <h2>Vallis</h2>
-            <p>Dotknij budynku, aby wejść do wybranej części miasta.</p>
+            <p>Wybierz budynek na planie miasta.</p>
           </div>
 
-          <button class="city-hotspot hotspot-arena" data-open="expeditions" aria-label="Arena">
-            <span class="hotspot-icon">⚔️</span><strong>Arena</strong><small>Walka i sława</small>
-          </button>
-          <button class="city-hotspot hotspot-forge" data-open="blacksmith" aria-label="Kuźnia Brenna">
-            <span class="hotspot-icon">🔨</span><strong>Kuźnia</strong><small>Naprawy i ulepszenia</small>
-          </button>
-          <button class="city-hotspot hotspot-market" data-open="merchant" aria-label="Rynek">
-            <span class="hotspot-icon">🪙</span><strong>Rynek</strong><small>Handel i mikstury</small>
-          </button>
-          <button class="city-hotspot hotspot-barracks" data-open="quests" aria-label="Koszary">
-            <span class="hotspot-icon">🛡️</span><strong>Koszary</strong><small>Zadania Marcusa</small>
-          </button>
-          <button class="city-hotspot hotspot-house" data-open="character" aria-label="Dom Żelaza">
-            <span class="hotspot-icon">🏠</span><strong>Dom Żelaza</strong><small>Postać i ekwipunek</small>
-          </button>
-          <button class="city-hotspot hotspot-gate" data-open="world" aria-label="Brama miasta">
-            <span class="hotspot-icon">🏛️</span><strong>Brama</strong><small>Mapa świata</small>
-          </button>
-          <button class="city-hotspot hotspot-chronicle" data-open="chronicle" aria-label="Dom Kronikarki">
-            <span class="hotspot-icon">📜</span><strong>Kronikarka</strong><small>Historia bohatera</small>
-          </button>
-
-          <button id="soundToggle" class="sound-toggle" type="button" aria-pressed="false">🔇 Dźwięk miasta</button>
+          <div class="city-district district-arena">
+            <button class="city-building" data-open="expeditions" type="button">
+              <span class="building-symbol">⚔️</span><strong>Arena Vallis</strong><small>Walki i wyprawy</small>
+            </button>
+          </div>
+          <div class="city-district district-forge">
+            <button class="city-building" data-open="blacksmith" type="button">
+              <span class="building-symbol">🔨</span><strong>Kuźnia Brenna</strong><small>Naprawa i ulepszanie</small>
+            </button>
+          </div>
+          <div class="city-district district-market">
+            <button class="city-building" data-open="merchant" type="button">
+              <span class="building-symbol">🪙</span><strong>Rynek</strong><small>Sklep i mikstury</small>
+            </button>
+          </div>
+          <div class="city-district district-auction">
+            <button class="city-building" data-open="auction" type="button">
+              <span class="building-symbol">🏛️</span><strong>Dom Aukcyjny</strong><small>Oferty handlarzy</small>
+            </button>
+          </div>
+          <div class="city-district district-barracks">
+            <button class="city-building" data-open="quests" type="button">
+              <span class="building-symbol">🛡️</span><strong>Koszary</strong><small>Zadania Marcusa</small>
+            </button>
+          </div>
+          <div class="city-district district-house">
+            <button class="city-building" data-open="character" type="button">
+              <span class="building-symbol">🎒</span><strong>Dom Żelaza</strong><small>Postać i plecak</small>
+            </button>
+          </div>
+          <div class="city-district district-gate">
+            <button class="city-building" data-open="world" type="button">
+              <span class="building-symbol">🚪</span><strong>Brama Vallis</strong><small>Mapa świata</small>
+            </button>
+          </div>
+          <div class="city-district district-archive">
+            <button class="city-building" data-open="bestiary" type="button">
+              <span class="building-symbol">📖</span><strong>Archiwum</strong><small>Bestiariusz</small>
+            </button>
+          </div>
         </div>
 
         <div class="npc-strip city-npcs">
@@ -204,13 +216,51 @@
         <div class="panel blacksmith-panel">
           <p class="eyebrow">KUŹNIA BRENNA</p>
           <h2>Kowal</h2>
-          <p>„Stal pamięta każde uderzenie. Człowiek powinien również.”</p>
-          <button id="repairBtn" class="primary-btn" type="button">Napraw wszystko — 20 złota</button>
-          <button id="upgradeBtn" class="primary-btn alt" type="button">Ulepsz najsłabszy założony przedmiot — 60 złota</button>
+          <p>Wybierz założony przedmiot. Każdy poziom ulepszenia zwiększa jego moc.</p>
+
+          <div class="forge-summary">
+            <div><span>Złoto</span><strong id="forgeGold">0</strong></div>
+            <div><span>Wybrany przedmiot</span><strong id="forgeSelectedName">Brak</strong></div>
+            <div><span>Poziom ulepszenia</span><strong id="forgeSelectedLevel">+0</strong></div>
+          </div>
+
+          <div id="forgeEquipmentList" class="forge-equipment-grid"></div>
+
+          <div class="forge-actions">
+            <button id="repairBtn" class="primary-btn" type="button">Napraw cały ekwipunek</button>
+            <button id="upgradeBtn" class="primary-btn alt" type="button">Ulepsz wybrany przedmiot</button>
+          </div>
+          <div id="forgeChanceBox" class="notice forge-chance">Wybierz przedmiot, aby zobaczyć koszt i szansę powodzenia.</div>
           <p id="repairStatus" class="small"></p>
         </div>
       </section>
 
+
+
+      <section id="view-auction" class="view">
+        <div class="panel auction-hero">
+          <p class="eyebrow">DOM AUKCYJNY VALLIS</p>
+          <h2>Aukcje</h2>
+          <p>Oferty handlarzy zmieniają się po odświeżeniu. Zakupiony przedmiot trafia do plecaka.</p>
+          <div class="auction-toolbar">
+            <select id="auctionFilter">
+              <option value="all">Wszystkie przedmioty</option>
+              <option value="weapon">Broń</option>
+              <option value="armor">Pancerze</option>
+              <option value="helmet">Hełmy</option>
+              <option value="shield">Tarcze</option>
+            </select>
+            <select id="auctionSort">
+              <option value="priceAsc">Cena rosnąco</option>
+              <option value="priceDesc">Cena malejąco</option>
+              <option value="powerDesc">Moc malejąco</option>
+            </select>
+            <button id="refreshAuctionBtn" class="primary-btn alt" type="button">Nowe oferty — 10 złota</button>
+          </div>
+          <p id="auctionStatus" class="small"></p>
+        </div>
+        <div id="auctionList" class="auction-grid"></div>
+      </section>
 
       <section id="view-bestiary" class="view">
         <div class="panel">
@@ -277,7 +327,7 @@
       </div>
     </div>
 
-    <footer>Project Colosseum v0.7.0 — prototyp testowy</footer>
+    <footer>Project Colosseum v0.8.0 — prototyp testowy</footer>
   </div>
 
   <script src="js/data.js"></script>
