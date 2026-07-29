@@ -1,5 +1,5 @@
 const GAME_DATA = {
-  version:"0.7.0",
+  version:"0.7.1",
   energyRegenMs:1000,
   inventoryLimit:30,
   gmInventoryLimit:250,
@@ -44,7 +44,7 @@ const GAME_DATA = {
       {name:"Pancerz Dezertera",slot:"armor",type:"Pancerz",chance:.15,power:[4,7]},
       {name:"Hełm Legionisty",slot:"helmet",type:"Hełm",chance:.12,power:[3,6]},
       {name:"Pęknięta Tarcza Legionisty",slot:"shield",type:"Tarcza",chance:.18,power:[3,6]}
-    ],
+    ]},
 
     {id:"mineRaider",image:"assets/monster-icons/mineRaider.webp",region:"mine",name:"Rabuś z Kopalni",type:"Humanoid",description:"Rabuś kradnący rudę i narzędzia z kopalni.",hp:105,attack:16,xp:62,gold:[26,42],danger:"Wysoki",boss:false,drops:[
       {name:"Kilof Rabusia",slot:"weapon",type:"Broń",chance:.18,power:[5,8]},
