@@ -1,6 +1,6 @@
 let state=loadGame();const $=id=>document.getElementById(id);
 function rarityClass(r){return`rarity-${r||"common"}`;}
-function showView(name){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));$(`view-${name}`).classList.add("active");document.querySelector(`.nav-btn[data-view="${name}"]`)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
+function showView(name){const target=$(`view-${name}`);if(!target)return;document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));target.classList.add("active");document.querySelector(`.nav-btn[data-view="${name}"]`)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
 function renderHeader(){ $("levelValue").textContent=state.level;$("goldValue").textContent=state.gold;$("energyValue").textContent=state.energy;$("maxEnergyValue").textContent=state.maxEnergy;$("hpValue").textContent=state.hp;$("maxHpValue").textContent=state.maxHp;$("xpLabel").textContent=`${state.xp} / ${state.xpNext}`;$("xpBar").style.width=`${Math.min(100,state.xp/state.xpNext*100)}%`;$("regenLabel").textContent=state.energy>=state.maxEnergy?"pełna":"1 punkt za sekundę";}
 function isRegionUnlocked(region){return state.profileType==="gm"||state.worldUnlocked||state.level>=region.unlockLevel;}
 function renderWorld(){
@@ -96,28 +96,116 @@ function renderBestiary(){
 }
 
 function renderChronicle(){$("chronicleList").innerHTML=state.chronicle.map((e,i)=>`<div class="chronicle-entry"><span class="small">Wpis ${state.chronicle.length-i}</span><div>${e}</div></div>`).join("");}
-function repairAll(){const d=Object.values(state.equipment).some(i=>i&&i.durability<100);if(!d){$("repairStatus").textContent="Cały ekwipunek jest już naprawiony.";return;}if(state.gold<20){$("repairStatus").textContent="Masz za mało złota.";return;}state.gold-=20;Object.values(state.equipment).forEach(i=>{if(i)i.durability=100;});state.chronicle.unshift("Brenn naprawił cały twój ekwipunek.");$("repairStatus").textContent="Ekwipunek naprawiony.";persistAndRender();}
-function upgradeWeakest(){if(state.gold<60){$("repairStatus").textContent="Masz za mało złota.";return;}const items=Object.values(state.equipment).filter(Boolean);if(!items.length)return;const item=items.sort((a,b)=>a.power-b.power)[0];state.gold-=60;item.power+=1;state.chronicle.unshift(`Brenn ulepszył przedmiot „${item.name}” do mocy ${item.power}.`);$("repairStatus").textContent=`Ulepszono: ${item.name}.`;persistAndRender();}
+function forgeItemLevel(item){return Number(item?.upgradeLevel)||0;}
+function forgeUpgradeCost(item){const level=forgeItemLevel(item);return Math.round(55+level*45+(item?.power||1)*3);}
+function forgeUpgradeChance(item){const level=forgeItemLevel(item);return Math.max(35,100-level*5);}
+function renderForge(){
+  const list=$("forgeEquipmentList");if(!list)return;
+  $("forgeGold").textContent=state.gold;
+  const slots=Object.keys(state.equipment);
+  if(!state.equipment[state.forgeSelectedSlot])state.forgeSelectedSlot=slots.find(s=>state.equipment[s])||"weapon";
+  list.innerHTML=slots.map(slot=>{
+    const item=state.equipment[slot],selected=state.forgeSelectedSlot===slot;
+    return `<button class="forge-item ${selected?"selected":""}" data-forge-slot="${slot}" ${item?"":"disabled"}>
+      <span>${GAME_DATA.equipmentLabels[slot]}</span>
+      <strong>${item?item.name:"Puste miejsce"}</strong>
+      <small>${item?`Moc ${item.power} · +${forgeItemLevel(item)} · Trwałość ${item.durability}%`:"Brak przedmiotu"}</small>
+    </button>`;
+  }).join("");
+  document.querySelectorAll("[data-forge-slot]").forEach(b=>b.onclick=()=>{state.forgeSelectedSlot=b.dataset.forgeSlot;saveGame(state);renderForge();});
+  const item=state.equipment[state.forgeSelectedSlot];
+  $("forgeSelectedName").textContent=item?item.name:"Brak";
+  $("forgeSelectedLevel").textContent=item?`+${forgeItemLevel(item)}`:"+0";
+  if(item){
+    const cost=forgeUpgradeCost(item),chance=forgeUpgradeChance(item);
+    $("forgeChanceBox").innerHTML=`Koszt ulepszenia: <strong>${cost} złota</strong> · Szansa powodzenia: <strong>${chance}%</strong> · Maksymalny poziom: <strong>+20</strong>`;
+    $("upgradeBtn").disabled=forgeItemLevel(item)>=20;
+  }else{
+    $("forgeChanceBox").textContent="Załóż przedmiot, aby móc go ulepszyć.";
+    $("upgradeBtn").disabled=true;
+  }
+}
+function repairAll(){
+  const damaged=Object.values(state.equipment).filter(i=>i&&i.durability<100);
+  if(!damaged.length){$("repairStatus").textContent="Cały ekwipunek jest już naprawiony.";return;}
+  const cost=damaged.reduce((sum,i)=>sum+Math.max(5,Math.ceil((100-i.durability)/5)),0);
+  if(state.gold<cost){$("repairStatus").textContent=`Naprawa kosztuje ${cost} złota. Masz za mało.`;return;}
+  state.gold-=cost;damaged.forEach(i=>i.durability=100);
+  state.chronicle.unshift(`Brenn naprawił ekwipunek za ${cost} złota.`);
+  $("repairStatus").textContent=`Naprawiono ekwipunek za ${cost} złota.`;persistAndRender();
+}
+function upgradeSelected(){
+  const item=state.equipment[state.forgeSelectedSlot];
+  if(!item){$("repairStatus").textContent="Najpierw wybierz założony przedmiot.";return;}
+  const level=forgeItemLevel(item);
+  if(level>=20){$("repairStatus").textContent="Ten przedmiot osiągnął maksymalny poziom +20.";return;}
+  const cost=forgeUpgradeCost(item),chance=forgeUpgradeChance(item);
+  if(state.gold<cost){$("repairStatus").textContent=`Potrzebujesz ${cost} złota.`;return;}
+  state.gold-=cost;
+  const success=Math.random()*100<chance;
+  if(success){
+    item.upgradeLevel=level+1;item.power+=Math.max(1,Math.ceil(item.power*.08));
+    state.chronicle.unshift(`Brenn ulepszył „${item.name}” do +${item.upgradeLevel}.`);
+    $("repairStatus").textContent=`Sukces! ${item.name} ma teraz +${item.upgradeLevel}.`;
+  }else{
+    item.durability=Math.max(10,item.durability-8);
+    state.chronicle.unshift(`Ulepszenie „${item.name}” nie powiodło się.`);
+    $("repairStatus").textContent="Ulepszenie nie powiodło się. Przedmiot stracił 8% trwałości, ale nie został zniszczony.";
+  }
+  persistAndRender();
+}
+function auctionRarityByPower(power){
+  if(power>=34)return"legendary";if(power>=23)return"epic";if(power>=13)return"rare";return"common";
+}
+function createAuctionOffers(){
+  const slots=["weapon","armor","helmet","shield"],offers=[];
+  for(let i=0;i<8;i++){
+    const slot=slots[(state.auctionSeed+i)%slots.length];
+    const names=GAME_DATA.auctionNames[slot];
+    const power=Math.max(5,Math.round(state.level*1.7+6+((state.auctionSeed*7+i*5)%14)));
+    const rarity=auctionRarityByPower(power);
+    const r=GAME_DATA.rarities[rarity];
+    offers.push({id:`auction-${state.auctionSeed}-${i}`,name:names[(state.auctionSeed+i)%names.length],slot,type:GAME_DATA.equipmentLabels[slot],
+      power,durability:100,upgradeLevel:0,rarity,rarityName:r.name,color:r.color,kind:"equipment",
+      price:Math.round(power*12*r.sellMultiplier+35)});
+  }
+  state.auctionOffers=offers;
+}
+function renderAuction(){
+  const list=$("auctionList");if(!list)return;
+  if(!state.auctionOffers.length)createAuctionOffers();
+  const filter=$("auctionFilter")?.value||"all",sort=$("auctionSort")?.value||"priceAsc";
+  let offers=[...state.auctionOffers].filter(o=>filter==="all"||o.slot===filter);
+  if(sort==="priceAsc")offers.sort((a,b)=>a.price-b.price);
+  if(sort==="priceDesc")offers.sort((a,b)=>b.price-a.price);
+  if(sort==="powerDesc")offers.sort((a,b)=>b.power-a.power);
+  list.innerHTML=offers.map(o=>`<article class="auction-card">
+    <img class="item-image" src="${itemImage(o)}" alt="${o.name}">
+    <span class="${rarityClass(o.rarity)}">${o.rarityName}</span><h3>${o.name}</h3>
+    <p>${o.type} · Moc ${o.power}</p><strong>${o.price} złota</strong>
+    <button class="item-btn primary" data-auction-buy="${o.id}">Kup</button>
+  </article>`).join("")||'<div class="panel"><p>Brak ofert w tej kategorii.</p></div>';
+  document.querySelectorAll("[data-auction-buy]").forEach(b=>b.onclick=()=>buyAuctionItem(b.dataset.auctionBuy));
+}
+function buyAuctionItem(id){
+  const index=state.auctionOffers.findIndex(o=>o.id===id);if(index<0)return;
+  const offer=state.auctionOffers[index],limit=state.profileType==="gm"?GAME_DATA.gmInventoryLimit:GAME_DATA.inventoryLimit;
+  if(state.gold<offer.price){$("auctionStatus").textContent="Masz za mało złota.";return;}
+  if(state.inventory.length>=limit){$("auctionStatus").textContent="Plecak jest pełny.";return;}
+  state.gold-=offer.price;const item={...offer,id:makeId()};delete item.price;
+  state.inventory.push(item);state.auctionOffers.splice(index,1);
+  state.chronicle.unshift(`Kupiono na aukcji „${item.name}” za ${offer.price} złota.`);
+  $("auctionStatus").textContent=`Kupiono: ${item.name}.`;persistAndRender();
+}
+function refreshAuction(){
+  if(state.gold<10){$("auctionStatus").textContent="Potrzebujesz 10 złota na nowe oferty.";return;}
+  state.gold-=10;state.auctionSeed++;createAuctionOffers();
+  state.chronicle.unshift("Odświeżono oferty Domu Aukcyjnego.");
+  $("auctionStatus").textContent="Pojawiły się nowe oferty.";persistAndRender();
+}
 function processEnergyRegeneration(){if(state.energy>=state.maxEnergy){state.lastEnergyTick=Date.now();return;}const now=Date.now(),points=Math.floor((now-state.lastEnergyTick)/GAME_DATA.energyRegenMs);if(points>0){state.energy=Math.min(state.maxEnergy,state.energy+points);state.lastEnergyTick+=points*GAME_DATA.energyRegenMs;saveGame(state);renderHeader();}}
 function openDialogue(id){const d=GAME_DATA.dialogues[id];if(!d)return;$("dialogueImage").src=d.image||"";$("dialogueImage").alt=d.name;$("dialogueRole").textContent=d.role;$("dialogueName").textContent=d.name;$("dialogueText").textContent=d.text;$("dialogueModal").classList.remove("hidden");}
 
-
-// v0.5: prosty ambient miasta generowany przez Web Audio API.
-let cityAudio=null;
-function toggleCitySound(){
-  const button=$("soundToggle");
-  if(!button)return;
-  if(cityAudio){
-    cityAudio.ctx.close();cityAudio=null;
-    button.setAttribute("aria-pressed","false");button.textContent="🔇 Dźwięk miasta";return;
-  }
-  const AudioContext=window.AudioContext||window.webkitAudioContext;
-  if(!AudioContext){button.textContent="Dźwięk niedostępny";return;}
-  const ctx=new AudioContext(),master=ctx.createGain(),osc1=ctx.createOscillator(),osc2=ctx.createOscillator(),gain1=ctx.createGain(),gain2=ctx.createGain();
-  master.gain.value=.035;osc1.type="sine";osc2.type="triangle";osc1.frequency.value=82;osc2.frequency.value=123;gain1.gain.value=.6;gain2.gain.value=.22;
-  osc1.connect(gain1).connect(master);osc2.connect(gain2).connect(master);master.connect(ctx.destination);osc1.start();osc2.start();
-  cityAudio={ctx,osc1,osc2};button.setAttribute("aria-pressed","true");button.textContent="🔊 Dźwięk miasta";
-}
 
 
 function gmItemFromTemplate(template){
@@ -214,13 +302,15 @@ function exitGm(){
 }
 
 function persistAndRender(){saveGame(state);renderAll();}
-function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderBestiary();renderChronicle();renderGm();}
+function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderForge();renderAuction();renderBestiary();renderChronicle();renderGm();}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));
 document.querySelectorAll("[data-dialogue]").forEach(b=>b.onclick=()=>openDialogue(b.dataset.dialogue));$("closeDialogue").onclick=()=>$("dialogueModal").classList.add("hidden");$("dialogueModal").onclick=e=>{if(e.target===$("dialogueModal"))$("dialogueModal").classList.add("hidden");};
-$("soundToggle").onclick=toggleCitySound;
 if($("bestiaryRegionFilter"))$("bestiaryRegionFilter").onchange=renderBestiary;
 if($("bestiaryStateFilter"))$("bestiaryStateFilter").onchange=renderBestiary;
-$("repairBtn").onclick=repairAll;$("upgradeBtn").onclick=upgradeWeakest;$("sellJunkBtn").onclick=sellAllTrophies;$("inventoryFilter").onchange=renderInventory;$("inventorySort").onchange=renderInventory;
+if($("auctionFilter"))$("auctionFilter").onchange=renderAuction;
+if($("auctionSort"))$("auctionSort").onchange=renderAuction;
+if($("refreshAuctionBtn"))$("refreshAuctionBtn").onclick=refreshAuction;
+$("repairBtn").onclick=repairAll;$("upgradeBtn").onclick=upgradeSelected;$("sellJunkBtn").onclick=sellAllTrophies;$("inventoryFilter").onchange=renderInventory;$("inventorySort").onchange=renderInventory;
 
 $("gmLoginBtn").onclick=activateGm;
 $("gmGrantAllBtn").onclick=gmGrantAllItems;

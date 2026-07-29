@@ -1,5 +1,5 @@
 const GAME_DATA = {
-  version:"0.7.1",
+  version:"0.8.0",
   energyRegenMs:1000,
   inventoryLimit:30,
   gmInventoryLimit:250,
@@ -151,6 +151,14 @@ const GAME_DATA = {
     {id:"ragePotion",name:"Eliksir furii",kind:"consumable",effect:"damageBuff",amount:25,durationMs:600000,price:120,description:"+25% obrażeń przez 10 minut"}
   ],
 
+
+
+  auctionNames:{
+    weapon:["Gladius Najemnika","Miecz Karawan","Topór Areny","Ostrze Popiołu","Miecz Strażnika"],
+    armor:["Kaftan Areny","Pancerz Najemnika","Zbroja Vallis","Kolczuga Karawan","Pancerz Weterana"],
+    helmet:["Hełm Strażnika","Hełm Areny","Hełm Najemnika","Hełm Centuriona","Maska Żelaza"],
+    shield:["Tarcza Vallis","Okrągła Tarcza","Puklerz Najemnika","Tarcza Areny","Mur Legionisty"]
+  },
 
   gmCatalog:[
     {name:"Gladius Rekruta",slot:"weapon",type:"Broń",power:8,rarity:"common"},
