@@ -129,3 +129,52 @@ select{background:#211911;color:var(--text);border:1px solid var(--border);borde
   .bestiary-card{grid-template-columns:86px 1fr;padding:11px}
   .bestiary-card>img,.unknown-monster{width:86px;height:86px}
 }
+
+
+/* ===== v0.8.0 — VALLIS, KUŹNIA I DOM AUKCYJNY ===== */
+.vallis-isometric{
+  min-height:720px;
+  background:
+    linear-gradient(180deg,rgba(9,7,5,.08),rgba(9,7,5,.42) 55%,rgba(9,7,5,.9)),
+    url("../assets/backgrounds/vallis.webp") center/cover no-repeat;
+}
+.vallis-isometric .city-title-card{z-index:10}
+.city-district{position:absolute;z-index:5;transform:translate(-50%,-50%) skewY(-4deg)}
+.city-building{
+  width:150px;min-height:92px;padding:12px;border:1px solid rgba(224,179,84,.72);border-radius:14px;
+  background:linear-gradient(145deg,rgba(90,58,24,.96),rgba(26,18,12,.97));
+  color:#fff7e7;box-shadow:0 14px 24px rgba(0,0,0,.42);cursor:pointer;text-align:center;
+}
+.city-building:active{filter:brightness(1.18)}
+.city-building strong,.city-building small{display:block}.city-building small{margin-top:4px;color:#cbbda7}
+.building-symbol{display:block;font-size:1.55rem;margin-bottom:4px}
+.district-arena{left:49%;top:32%}.district-forge{left:77%;top:50%}.district-market{left:27%;top:54%}
+.district-auction{left:72%;top:72%}.district-barracks{left:72%;top:27%}.district-house{left:47%;top:69%}
+.district-gate{left:15%;top:35%}.district-archive{left:20%;top:76%}
+
+.forge-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.forge-summary>div{padding:12px;border:1px solid rgba(214,161,61,.28);border-radius:11px;background:rgba(0,0,0,.28)}
+.forge-summary span{display:block;color:#aa9d8a;font-size:.76rem}.forge-summary strong{display:block;margin-top:5px;color:#f0cb75}
+.forge-equipment-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0}
+.forge-item{padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(15,10,7,.86);color:#eee;text-align:left}
+.forge-item span,.forge-item strong,.forge-item small{display:block}.forge-item span{color:#aa9d8a;font-size:.72rem;text-transform:uppercase}
+.forge-item strong{margin:4px 0}.forge-item small{color:#c8bca9}
+.forge-item.selected{border-color:#d9a746;box-shadow:0 0 0 2px rgba(217,167,70,.14)}
+.forge-actions{display:flex;gap:10px;flex-wrap:wrap}.forge-chance{margin-top:12px}
+
+.auction-hero{background:linear-gradient(90deg,rgba(20,13,8,.94),rgba(20,13,8,.72)),url("../assets/backgrounds/market.webp") center/cover}
+.auction-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.auction-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.auction-card{padding:14px;border:1px solid rgba(197,145,55,.26);border-radius:13px;background:linear-gradient(145deg,#2d1e12,#15100b);overflow:hidden}
+.auction-card h3{margin:5px 0}.auction-card .item-btn{margin-top:10px;width:100%}
+
+@media(max-width:700px){
+  .vallis-isometric{min-height:790px;background-position:center}
+  .city-building{width:112px;min-height:82px;padding:8px}.city-building small{display:none}
+  .district-arena{left:50%;top:31%}.district-forge{left:76%;top:48%}.district-market{left:24%;top:51%}
+  .district-auction{left:73%;top:70%}.district-barracks{left:75%;top:26%}.district-house{left:48%;top:66%}
+  .district-gate{left:18%;top:34%}.district-archive{left:23%;top:72%}
+  .forge-summary,.forge-equipment-grid{grid-template-columns:1fr}
+}
+
+.city-hotspot,.city-smoke,.city-banner,.city-sky-glow{animation:none!important}
