@@ -108,3 +108,24 @@ select{background:#211911;color:var(--text);border:1px solid var(--border);borde
   .gm-status-grid,.gm-actions{grid-template-columns:1fr}
   .profile-badge{order:-1}
 }
+
+
+/* ===== v0.7.0 — IKONY POTWORÓW I BESTIARIUSZ ===== */
+.monster-icon{border-radius:18px;object-fit:cover;box-shadow:0 0 0 2px rgba(192,136,43,.38),0 10px 24px rgba(0,0,0,.38)}
+.enemy-type{display:inline-block;margin:3px 0 6px;color:#d8b565;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.bestiary-filters{margin:12px 0;display:flex;gap:10px;flex-wrap:wrap}
+.bestiary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+.bestiary-card{display:grid;grid-template-columns:112px 1fr;gap:14px;padding:14px;border:1px solid rgba(184,132,46,.25);border-radius:15px;background:linear-gradient(145deg,rgba(46,31,18,.94),rgba(20,14,10,.97));box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.bestiary-card.boss{border-color:#b84f38;box-shadow:0 0 0 1px rgba(184,79,56,.18),0 12px 28px rgba(0,0,0,.36)}
+.bestiary-card>img{width:112px;height:112px;border-radius:14px;object-fit:cover}
+.bestiary-card h3{margin:2px 0 7px}
+.bestiary-card p{margin:5px 0;color:#c7bfb3}
+.bestiary-card.locked{filter:saturate(.3)}
+.unknown-monster{display:grid;place-items:center;width:112px;height:112px;border-radius:14px;background:radial-gradient(circle,#453523,#17100b);font-size:3.4rem;font-weight:900;color:#8c7658;border:1px solid #5b4328}
+.bestiary-stats{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}
+.bestiary-stats span{padding:5px 8px;border-radius:8px;background:rgba(0,0,0,.28);font-weight:800}
+@media(max-width:560px){
+  .bestiary-grid{grid-template-columns:1fr}
+  .bestiary-card{grid-template-columns:86px 1fr;padding:11px}
+  .bestiary-card>img,.unknown-monster{width:86px;height:86px}
+}
