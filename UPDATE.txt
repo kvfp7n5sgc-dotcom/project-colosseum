@@ -1,17 +1,13 @@
-PROJECT COLOSSEUM v0.14.2 — LOCHY 2.0
+PROJECT COLOSSEUM v0.14.3 — LOCHY CLICK FIX
 
-PODMIEŃ:
+Podmień:
 - index.html
 - css/
 - js/
 
-NIE PODMIENIAJ:
-- assets/
-
-ZMIANY:
-- 4 kolorystycznie odrębne lochy
-- podgląd 4 unikalnych przeciwników w każdym lochu
-- osobny portret bossa
-- czytelny przebieg komnat i HP bohatera
-- działające wejście, walka, opuszczanie i nagrody
-- zachowany system Wypraw v0.14.1
+Naprawiono:
+- pierwszy loch jest dostępny od poziomu 1,
+- cała karta lochu reaguje na dotyk,
+- przyciski działają w Safari na iPhone,
+- uszkodzony stary zapis aktywnego lochu nie blokuje menu,
+- aktywny loch można ponownie otworzyć.
