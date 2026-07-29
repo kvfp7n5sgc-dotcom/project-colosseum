@@ -1,0 +1,17 @@
+PROJECT COLOSSEUM v0.12.0 — RYSOWANE VALLIS
+
+NOWOŚCI:
+- nowa, ostra, ręcznie rysowana mapa Vallis,
+- duże budynki stworzone specjalnie do klikania,
+- brak okrągłych ikon i stałych napisów na mapie,
+- niewidzialne pola dotyku ustawione bezpośrednio na budynkach,
+- podświetlenie i nazwa pojawiają się tylko podczas dotknięcia,
+- proporcje mapy dopasowane do telefonu.
+
+SKOPIUJ:
+- folder css/
+- folder assets/
+- plik index.html
+
+NIE MUSISZ KOPIOWAĆ:
+- folder js/

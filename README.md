@@ -1,5 +1,10 @@
-# Project Colosseum v0.10.0
+# Project Colosseum v0.12.0 — Rysowane Vallis
 
-Dodano arenę, 4 lochy i drzewko 6 umiejętności.
+Nowa ręcznie rysowana mapa miasta z bezpośrednio klikalnymi budynkami.
 
-Kod GM: `COLOSSEUM-GM`
+## Skopiuj do projektu
+- `css/`
+- `assets/`
+- `index.html`
+
+Folder `js/` nie został zmieniony.
