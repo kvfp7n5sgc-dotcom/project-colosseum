@@ -8,6 +8,9 @@ function renderWorld(){
   document.querySelectorAll("[data-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.region;persistAndRender();showView("expeditions");});
 }
 function renderEnemies(){
+  const region=GAME_DATA.regions.find(r=>r.id===state.selectedRegion);
+  const expeditionTitle=document.querySelector("#view-expeditions h2");
+  if(expeditionTitle)expeditionTitle.textContent=region?`Wyprawy — ${region.name}`:"Wyprawy";
   const enemies=GAME_DATA.enemies.filter(e=>e.region===state.selectedRegion);
   $("enemyList").innerHTML=enemies.map(e=>`<article class="enemy-card ${e.boss?"boss-card":""}"><h3>${e.name}</h3><div class="enemy-meta">Życie: ${e.hp}<br>Atak: ${e.attack}<br>Nagroda: ${e.xp} XP, ${e.gold[0]}–${e.gold[1]} złota</div><span class="danger">${e.danger}</span><br><button class="fight-btn" data-enemy="${e.id}">Walcz</button></article>`).join("")||`<p class="small">Brak dostępnych przeciwników.</p>`;
   document.querySelectorAll("[data-enemy]").forEach(b=>b.onclick=()=>{const enemy=GAME_DATA.enemies.find(e=>e.id===b.dataset.enemy);const result=runCombat(state,enemy);$("battleReport").classList.remove("hidden");$("battleReport").innerHTML=`<strong>${result.title}</strong><p>${result.summary}</p>${result.log.length?`<details><summary>Przebieg walki</summary><ol>${result.log.map(x=>`<li>${x}</li>`).join("")}</ol></details>`:""}`;persistAndRender();});
@@ -65,6 +68,33 @@ function renderQuests(){
 }
 function claimQuest(id){const q=GAME_DATA.quests.find(x=>x.id===id);if(!q||state.quests[id]==="claimed"||questProgress(q)<q.required)return;state.xp+=q.reward.xp;state.gold+=q.reward.gold;const limit=state.profileType==="gm"?GAME_DATA.gmInventoryLimit:GAME_DATA.inventoryLimit;if(q.reward.item&&state.inventory.length<limit)state.inventory.push(createLootItem(q.reward.item));state.quests[id]="claimed";state.chronicle.unshift(`Ukończyłeś zadanie „${q.name}”.`);applyLevelUps(state);persistAndRender();}
 function renderBuffs(){const active=state.buffs.damageUntil>Date.now();$("activeBuffs").innerHTML=active?`<span class="buff">Furia: +${state.buffs.damagePercent}% obrażeń</span>`:`<span class="small">Brak aktywnych efektów.</span>`;}
+
+function renderBestiaryFilters(){
+  const regionSelect=$("bestiaryRegionFilter");
+  if(!regionSelect)return;
+  const current=regionSelect.value||"all";
+  regionSelect.innerHTML='<option value="all">Wszystkie regiony</option>'+GAME_DATA.regions.map(r=>`<option value="${r.id}">${r.name}</option>`).join("");
+  regionSelect.value=[...regionSelect.options].some(o=>o.value===current)?current:"all";
+}
+function renderBestiary(){
+  const list=$("bestiaryList");if(!list)return;
+  renderBestiaryFilters();
+  const region=$("bestiaryRegionFilter")?.value||"all";
+  const stateFilter=$("bestiaryStateFilter")?.value||"all";
+  const visible=GAME_DATA.enemies.filter(e=>region==="all"||e.region===region).filter(e=>{
+    const unlocked=state.profileType==="gm"||(state.kills[e.id]||0)>0;
+    return stateFilter==="all"||(stateFilter==="unlocked"&&unlocked)||(stateFilter==="locked"&&!unlocked);
+  });
+  list.innerHTML=visible.map(e=>{
+    const kills=state.kills[e.id]||0;
+    const unlocked=state.profileType==="gm"||kills>0;
+    const regionName=GAME_DATA.regions.find(r=>r.id===e.region)?.name||e.region;
+    if(!unlocked)return `<article class="bestiary-card locked"><div class="unknown-monster">?</div><div><span class="enemy-type">${regionName}</span><h3>Nieodkryty przeciwnik</h3><p>Pokonaj go przynajmniej raz, aby odblokować kartę.</p></div></article>`;
+    const drops=e.drops.map(d=>`${d.name} (${Math.round(d.chance*100)}%)`).join(" · ");
+    return `<article class="bestiary-card ${e.boss?"boss":""}"><img src="${e.image}" alt="${e.name}"><div><span class="enemy-type">${e.type||"Przeciwnik"} · ${regionName}</span><h3>${e.name}</h3><p>${e.description||""}</p><div class="bestiary-stats"><span>❤️ ${e.hp}</span><span>⚔️ ${e.attack}</span><span>🏆 ${kills}</span></div><p class="small"><strong>Łupy:</strong> ${drops}</p></div></article>`;
+  }).join("")||'<div class="panel"><p>Brak wpisów pasujących do filtra.</p></div>';
+}
+
 function renderChronicle(){$("chronicleList").innerHTML=state.chronicle.map((e,i)=>`<div class="chronicle-entry"><span class="small">Wpis ${state.chronicle.length-i}</span><div>${e}</div></div>`).join("");}
 function repairAll(){const d=Object.values(state.equipment).some(i=>i&&i.durability<100);if(!d){$("repairStatus").textContent="Cały ekwipunek jest już naprawiony.";return;}if(state.gold<20){$("repairStatus").textContent="Masz za mało złota.";return;}state.gold-=20;Object.values(state.equipment).forEach(i=>{if(i)i.durability=100;});state.chronicle.unshift("Brenn naprawił cały twój ekwipunek.");$("repairStatus").textContent="Ekwipunek naprawiony.";persistAndRender();}
 function upgradeWeakest(){if(state.gold<60){$("repairStatus").textContent="Masz za mało złota.";return;}const items=Object.values(state.equipment).filter(Boolean);if(!items.length)return;const item=items.sort((a,b)=>a.power-b.power)[0];state.gold-=60;item.power+=1;state.chronicle.unshift(`Brenn ulepszył przedmiot „${item.name}” do mocy ${item.power}.`);$("repairStatus").textContent=`Ulepszono: ${item.name}.`;persistAndRender();}
@@ -184,10 +214,12 @@ function exitGm(){
 }
 
 function persistAndRender(){saveGame(state);renderAll();}
-function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderChronicle();renderGm();}
+function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderBestiary();renderChronicle();renderGm();}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));
 document.querySelectorAll("[data-dialogue]").forEach(b=>b.onclick=()=>openDialogue(b.dataset.dialogue));$("closeDialogue").onclick=()=>$("dialogueModal").classList.add("hidden");$("dialogueModal").onclick=e=>{if(e.target===$("dialogueModal"))$("dialogueModal").classList.add("hidden");};
 $("soundToggle").onclick=toggleCitySound;
+if($("bestiaryRegionFilter"))$("bestiaryRegionFilter").onchange=renderBestiary;
+if($("bestiaryStateFilter"))$("bestiaryStateFilter").onchange=renderBestiary;
 $("repairBtn").onclick=repairAll;$("upgradeBtn").onclick=upgradeWeakest;$("sellJunkBtn").onclick=sellAllTrophies;$("inventoryFilter").onchange=renderInventory;$("inventorySort").onchange=renderInventory;
 
 $("gmLoginBtn").onclick=activateGm;
