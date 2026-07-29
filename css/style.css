@@ -178,3 +178,38 @@ select{background:#211911;color:var(--text);border:1px solid var(--border);borde
 }
 
 .city-hotspot,.city-smoke,.city-banner,.city-sky-glow{animation:none!important}
+
+
+/* ===== v0.9.0 — SYSTEMY IMPERIUM ===== */
+.world-phase{border-color:#d6a94d;background:rgba(104,70,21,.28)}
+.world-phase.night{border-color:#697cc8;background:rgba(35,45,91,.52);color:#dbe1ff}
+.imperium-hero{
+  background:
+    linear-gradient(90deg,rgba(17,11,7,.96),rgba(17,11,7,.68)),
+    url("../assets/backgrounds/ruins.webp") center/cover;
+}
+.imperium-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+.imperium-summary>div{padding:12px;border:1px solid rgba(215,165,67,.28);border-radius:12px;background:rgba(0,0,0,.32)}
+.imperium-summary span{display:block;color:#a99d8d;font-size:.72rem;text-transform:uppercase}
+.imperium-summary strong{display:block;margin-top:5px;color:#efc871}
+.imperium-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.system-card h3{margin-top:2px}.wide-card{grid-column:1/-1}
+.system-list{display:grid;gap:8px;margin:12px 0}
+.system-option{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;padding:11px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(0,0,0,.28);color:#eee;text-align:left}
+.system-option.selected{border-color:#d2a044;box-shadow:0 0 0 2px rgba(210,160,68,.13)}
+.system-option strong,.system-option small{display:block}.system-option small{margin-top:3px;color:#ada394}
+.system-icon{font-size:1.65rem}
+.fort-grid,.voyage-grid,.estate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:12px 0}
+.fort-card,.voyage-card,.estate-card{padding:13px;border:1px solid rgba(205,150,54,.24);border-radius:12px;background:linear-gradient(145deg,rgba(50,32,18,.9),rgba(19,13,9,.96))}
+.fort-card.owned{border-color:#72a76e}.fort-card strong,.voyage-card strong,.estate-card strong{display:block}
+.fort-card p,.voyage-card p,.estate-card p{color:#beb4a5;min-height:38px}
+.mount-row{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.mount-row strong,.mount-row small{display:block}.mount-row small{color:#aaa092}
+.reputation-list{display:grid;gap:12px;margin-top:12px}.reputation-row strong,.reputation-row small{display:block}.reputation-row small{color:#aaa092}
+.rep-track{height:9px;margin-top:6px;border-radius:99px;background:#17110c;overflow:hidden}.rep-track span{display:block;height:100%;background:linear-gradient(90deg,#8d5c24,#e6bc62)}
+.event-card{min-height:105px;padding:16px;margin:12px 0;border:1px dashed rgba(216,167,72,.42);border-radius:12px;background:rgba(0,0,0,.25)}
+.event-reward{font-weight:900;color:#efc76c}
+@media(max-width:760px){
+  .imperium-summary{grid-template-columns:repeat(2,1fr)}
+  .imperium-grid{grid-template-columns:1fr}.wide-card{grid-column:auto}
+}
