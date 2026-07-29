@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.9.0</title>
+  <title>Project Colosseum v0.10.0</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -49,6 +49,9 @@
       <button class="nav-btn" data-view="auction">Aukcje</button>
       <button class="nav-btn" data-view="bestiary">Bestiariusz</button>
       <button class="nav-btn" data-view="imperium">Imperium</button>
+      <button class="nav-btn" data-view="arena">Arena</button>
+      <button class="nav-btn" data-view="dungeons">Lochy</button>
+      <button class="nav-btn" data-view="skills">Umiejętności</button>
       <button class="nav-btn" data-view="chronicle">Kronika</button>
       <button id="gmNavBtn" class="nav-btn gm-only hidden" data-view="gm">GM</button>
     </nav>
@@ -362,6 +365,10 @@
         </div>
       </section>
 
+
+      <section id="view-arena" class="view"><div class="panel arena-hero"><p class="eyebrow">ARENA VALLIS</p><h2>Liga gladiatorów</h2><p>Walcz z przeciwnikami AI i awansuj w ligach.</p><div class="arena-summary"><div><span>Liga</span><strong id="arenaLeague">Brąz</strong></div><div><span>Punkty</span><strong id="arenaPoints">0</strong></div><div><span>Seria</span><strong id="arenaStreak">0</strong></div><div><span>Rekord</span><strong id="arenaBestStreak">0</strong></div></div></div><div id="arenaOpponentList" class="arena-grid"></div><div class="panel"><h3>Raport areny</h3><div id="arenaReport" class="battle-report"><p>Wybierz przeciwnika.</p></div></div></section>
+      <section id="view-dungeons" class="view"><div class="panel dungeon-hero"><p class="eyebrow">LOCHY</p><h2>Wyprawy wieloetapowe</h2><p>Oczyść kolejne komnaty i pokonaj bossa.</p></div><div id="dungeonList" class="dungeon-grid"></div><div class="panel"><h3 id="dungeonRunTitle">Brak aktywnego lochu</h3><p id="dungeonRunDescription">Wybierz loch.</p><div id="dungeonProgress" class="dungeon-progress"></div><button id="dungeonFightBtn" class="primary-btn" disabled>Walcz dalej</button><button id="dungeonLeaveBtn" class="primary-btn alt" disabled>Opuść loch</button><div id="dungeonReport" class="battle-report"><p>Brak aktywnej wyprawy.</p></div></div></section>
+      <section id="view-skills" class="view"><div class="panel skills-hero"><p class="eyebrow">ROZWÓJ POSTACI</p><h2>Drzewko umiejętności</h2><p>Otrzymujesz 1 punkt co 2 poziomy.</p><div class="skill-points-box">Dostępne punkty: <strong id="skillPointsValue">0</strong></div></div><div id="skillTree" class="skill-tree"></div></section>
       <section id="view-chronicle" class="view">
         <div class="panel">
           <p class="eyebrow">PAMIĘĆ ŚWIATA</p>
@@ -408,7 +415,7 @@
       </div>
     </div>
 
-    <footer>Project Colosseum v0.9.0 — prototyp testowy</footer>
+    <footer>Project Colosseum v0.10.0 — prototyp testowy</footer>
   </div>
 
   <script src="js/data.js"></script>
