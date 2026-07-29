@@ -1,6 +1,6 @@
 let state=loadGame();const $=id=>document.getElementById(id);
 function rarityClass(r){return`rarity-${r||"common"}`;}
-function showView(name){const target=$(`view-${name}`);if(!target)return;document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));target.classList.add("active");document.querySelector(`.nav-btn[data-view="${name}"]`)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
+function showView(name){const target=$(`view-${name}`);if(!target)return;document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".game-dock .nav-btn").forEach(b=>b.classList.remove("active"));target.classList.add("active");const direct=document.querySelector(`.game-dock .nav-btn[data-view="${name}"]`);if(direct)direct.classList.add("active");else $("moreNavBtn")?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
 function mountRewardMultiplier(){return state.equippedMount==="imperialLion"?1.10:state.equippedMount==="warHorse"?1.05:1;}
 function mountDamageMultiplier(){return state.equippedMount==="direWolf"?1.05:1;}
 function estateXpMultiplier(){return 1+Math.max(0,(state.estate?.trainingYard||1)-1)*.03;}
@@ -492,7 +492,12 @@ function exitGm(){
 
 function persistAndRender(){saveGame(state);renderAll();}
 function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderForge();renderAuction();renderBestiary();renderImperium();renderArena();renderDungeons();renderSkills();renderChronicle();renderGm();}
-document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));
+document.querySelectorAll(".nav-btn[data-view]").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{showView(b.dataset.open);closeMoreMenu();});
+const moreMenu=$("moreMenu"),moreNavBtn=$("moreNavBtn");
+function openMoreMenu(){moreMenu?.classList.remove("hidden");moreMenu?.setAttribute("aria-hidden","false");moreNavBtn?.setAttribute("aria-expanded","true");}
+function closeMoreMenu(){moreMenu?.classList.add("hidden");moreMenu?.setAttribute("aria-hidden","true");moreNavBtn?.setAttribute("aria-expanded","false");}
+moreNavBtn&&(moreNavBtn.onclick=openMoreMenu);$("closeMoreMenu")&&($("closeMoreMenu").onclick=closeMoreMenu);moreMenu?.querySelector(".more-menu-backdrop")?.addEventListener("click",closeMoreMenu);
 document.querySelectorAll("[data-dialogue]").forEach(b=>b.onclick=()=>openDialogue(b.dataset.dialogue));$("closeDialogue").onclick=()=>$("dialogueModal").classList.add("hidden");$("dialogueModal").onclick=e=>{if(e.target===$("dialogueModal"))$("dialogueModal").classList.add("hidden");};
 if($("bestiaryRegionFilter"))$("bestiaryRegionFilter").onchange=renderBestiary;
 if($("bestiaryStateFilter"))$("bestiaryStateFilter").onchange=renderBestiary;
