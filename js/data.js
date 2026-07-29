@@ -1,5 +1,5 @@
 const GAME_DATA = {
-  version:"0.9.0",
+  version:"0.10.0",
   energyRegenMs:1000,
   inventoryLimit:30,
   gmInventoryLimit:250,
@@ -154,6 +154,23 @@ const GAME_DATA = {
 
 
 
+
+  arenaOpponents:[
+    {id:"rookie",name:"Titus Młody",league:"Brąz",hp:150,attack:20,defense:4,rewardPoints:18,rewardGold:[55,85],image:"assets/monster-icons/bandit.webp"},
+    {id:"shieldmaiden",name:"Livia Żelazna",league:"Brąz",hp:190,attack:23,defense:8,rewardPoints:22,rewardGold:[70,100],image:"assets/monster-icons/deserter.webp"},
+    {id:"veteran",name:"Cassius Weteran",league:"Srebro",hp:250,attack:29,defense:10,rewardPoints:30,rewardGold:[95,135],image:"assets/monster-icons/fallenForeman.webp"},
+    {id:"champion",name:"Aurelius Czempion",league:"Złoto",hp:350,attack:38,defense:15,rewardPoints:44,rewardGold:[150,220],image:"assets/monster-icons/banditChief.webp"},
+    {id:"imperial",name:"Maximus Imperialis",league:"Mistrz",hp:520,attack:50,defense:22,rewardPoints:65,rewardGold:[260,360],image:"assets/monster-icons/stoneGuardian.webp"}
+  ],
+  dungeons:[
+    {id:"cryptOfAsh",name:"Krypta Popiołu",level:5,energy:2,rewardGold:[280,380],rewardXp:340,rooms:[{name:"Przedsionek kości",enemy:"skeleton"},{name:"Sala pajęczyn",enemy:"cryptSpider"},{name:"Zapieczętowany grobowiec",enemy:"graveWarden"},{name:"Tron Licha",enemy:"lich"}]},
+    {id:"jackalVault",name:"Skarbiec Czerwonych Szakali",level:9,energy:3,rewardGold:[520,720],rewardXp:620,rooms:[{name:"Posterunek zwiadowców",enemy:"campScout"},{name:"Sala łupów",enemy:"campBrute"},{name:"Galeria łuczników",enemy:"campArcher"},{name:"Komnata herszta",enemy:"banditChief"}]},
+    {id:"blackMarshTemple",name:"Świątynia Czarnych Bagien",level:12,energy:3,rewardGold:[850,1150],rewardXp:980,rooms:[{name:"Zalana krypta",enemy:"swampCrawler"},{name:"Ołtarz wiedźmy",enemy:"bogWitch"},{name:"Most trolla",enemy:"marshTroll"},{name:"Gniazdo Hydry",enemy:"swampHydra"}]},
+    {id:"frozenAbyss",name:"Zamarznięta Otchłań",level:15,energy:4,rewardGold:[1300,1800],rewardXp:1450,rooms:[{name:"Lodowy przesmyk",enemy:"iceWolf"},{name:"Obóz najeźdźców",enemy:"frostRaider"},{name:"Komnata golema",enemy:"iceGolem"},{name:"Serce otchłani",enemy:"frostWyrm"}]}
+  ],
+  skillDefinitions:[
+    {id:"powerStrike",name:"Potężne uderzenie",icon:"⚔️",max:5,description:"+4% obrażeń za poziom."},{id:"ironSkin",name:"Żelazna skóra",icon:"🛡️",max:5,description:"+5% życia za poziom."},{id:"criticalEye",name:"Krytyczne oko",icon:"🎯",max:5,description:"+3% szansy na krytyk."},{id:"secondWind",name:"Drugi oddech",icon:"❤️",max:3,description:"Po porażce odzyskujesz wytrzymałość."},{id:"goldHunter",name:"Łowca złota",icon:"🪙",max:5,description:"+5% złota z walk."},{id:"dungeonMastery",name:"Mistrz lochów",icon:"🏰",max:5,description:"+6% nagród z lochów."}
+  ],
   professions:[
     {id:"miner",name:"Górnik",icon:"⛏️",description:"Wydobywa rudę i zwiększa zyski z kopalni.",baseGold:42,reputation:"freefolk"},
     {id:"blacksmith",name:"Kowal",icon:"🔨",description:"Wytwarza części uzbrojenia i obniża koszty kuźni.",baseGold:38,reputation:"legion"},

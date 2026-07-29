@@ -8,7 +8,7 @@ function createStarterItem(name,slot,type,power,durability=100){
 
 function createNewState(){
   return {
-    saveVersion:"0.9.0",level:1,xp:0,xpNext:100,gold:120,energy:10,maxEnergy:10,lastEnergyTick:Date.now(),
+    saveVersion:"0.10.0",level:1,xp:0,xpNext:100,gold:120,energy:10,maxEnergy:10,lastEnergyTick:Date.now(),
     hp:100,maxHp:100,statPoints:0,selectedRegion:"outskirts",
     stats:{strength:8,endurance:8,dexterity:7,cunning:5,luck:5},
     equipment:{weapon:createStarterItem("Zużyty Gladius","weapon","Broń",5,72),armor:createStarterItem("Skórzany Kaftan","armor","Pancerz",3,81),helmet:null,shield:null},
@@ -18,7 +18,7 @@ function createNewState(){
     forts:{vallisGate:false,riverWatch:false,ashPass:false},fortIncomeLastClaim:0,
     ownedMounts:[],equippedMount:null,reputation:{legion:0,merchants:0,freefolk:0},
     voyage:null,voyageHistory:[],estate:{workshop:1,storehouse:1,trainingYard:1},estateIncomeLastClaim:0,
-    lastRandomEvent:null,randomEventCount:0,chronicle:["Przybyłeś do Vallis jako niewolnik Domu Żelaza."]
+    lastRandomEvent:null,randomEventCount:0,arena:{points:0,wins:0,losses:0,streak:0,bestStreak:0},dungeonRun:null,dungeonsCompleted:{},skills:{powerStrike:0,ironSkin:0,criticalEye:0,secondWind:0,goldHunter:0,dungeonMastery:0},skillPointsSpent:0,chronicle:["Przybyłeś do Vallis jako niewolnik Domu Żelaza."]
   };
 }
 
@@ -47,8 +47,8 @@ function migrateState(raw){
   state.reputation={...fresh.reputation,...(raw.reputation||{})};
   state.voyage=state.voyage||null;state.voyageHistory=Array.isArray(state.voyageHistory)?state.voyageHistory:[];
   state.estate={...fresh.estate,...(raw.estate||{})};state.estateIncomeLastClaim=Number(state.estateIncomeLastClaim)||0;
-  state.lastRandomEvent=state.lastRandomEvent||null;state.randomEventCount=Number(state.randomEventCount)||0;
-  state.forgeSelectedSlot=state.forgeSelectedSlot||"weapon";state.auctionOffers=Array.isArray(state.auctionOffers)?state.auctionOffers:[];state.auctionSeed=Number(state.auctionSeed)||1;state.worldUnlocked=Boolean(state.worldUnlocked);state.saveVersion="0.9.0";return state;
+  state.lastRandomEvent=state.lastRandomEvent||null;state.randomEventCount=Number(state.randomEventCount)||0;state.arena={points:0,wins:0,losses:0,streak:0,bestStreak:0,...(raw.arena||{})};state.dungeonRun=raw.dungeonRun||null;state.dungeonsCompleted={...(raw.dungeonsCompleted||{})};state.skills={...fresh.skills,...(raw.skills||{})};state.skillPointsSpent=Number(raw.skillPointsSpent)||0;
+  state.forgeSelectedSlot=state.forgeSelectedSlot||"weapon";state.auctionOffers=Array.isArray(state.auctionOffers)?state.auctionOffers:[];state.auctionSeed=Number(state.auctionSeed)||1;state.worldUnlocked=Boolean(state.worldUnlocked);state.saveVersion="0.10.0";return state;
 }
 
 function saveGame(state){localStorage.setItem(SAVE_KEY,JSON.stringify(state));}
