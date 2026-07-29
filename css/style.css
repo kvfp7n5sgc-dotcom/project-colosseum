@@ -394,3 +394,63 @@ body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
   .more-menu-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:390px){.game-dock .nav-btn{font-size:8px}.more-menu-grid{grid-template-columns:repeat(3,1fr)}}
+
+
+/* ===== v0.13.0 — PEŁNOEKRANOWE VALLIS ===== */
+.city-hud-title{display:none}
+
+@media(max-width:760px){
+  body.city-mode{overflow:hidden;padding:0;background:#090704}
+  body.city-mode .app-shell{width:100%;max-width:none;min-height:100svh;padding:0;margin:0}
+  body.city-mode .topbar{display:none}
+  body.city-mode .progress-wrap{display:none}
+  body.city-mode main{position:fixed;inset:0 0 calc(69px + env(safe-area-inset-bottom)) 0;margin:0;padding:0;overflow:hidden}
+  body.city-mode main>.view:not(#view-city){display:none!important}
+  body.city-mode #view-city{display:block!important;position:absolute;inset:0;margin:0;padding:0}
+
+  body.city-mode .status-grid.panel{
+    position:fixed;z-index:92;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top));
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;
+    margin:0;padding:5px;border-radius:13px;
+    background:linear-gradient(180deg,rgba(24,17,11,.94),rgba(11,8,6,.91));
+    border-color:rgba(211,159,66,.55);box-shadow:0 7px 24px rgba(0,0,0,.48);backdrop-filter:blur(10px)
+  }
+  body.city-mode .status-grid div{padding:5px 3px;text-align:center;background:rgba(255,255,255,.025);border-radius:8px}
+  body.city-mode .status-grid span{display:block;font-size:9px;line-height:1.1;color:#b9aa91}
+  body.city-mode .status-grid strong{font-size:13px;line-height:1.2;color:#f0d292}
+
+  body.city-mode #view-city .city-map-shell{
+    position:absolute;inset:0;display:block;margin:0;padding:0;
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:none;touch-action:pan-x;
+    background:#060503;overscroll-behavior:none
+  }
+  body.city-mode #view-city .vallis-map{
+    height:100%;width:max(100vw,calc(100svh * 1.67));min-height:0!important;max-width:none;
+    aspect-ratio:auto!important;margin:0;border:0;border-radius:0!important;
+    background-size:auto 100%!important;background-position:center center!important;
+    box-shadow:none;flex:none
+  }
+  body.city-mode #view-city .vallis-map::after{display:none}
+  body.city-mode #view-city .drawn-city-note,
+  body.city-mode #view-city .city-npcs,
+  body.city-mode #view-city .city-rumor{display:none!important}
+
+  body.city-mode .city-hud-title{
+    display:flex;position:fixed;z-index:91;left:12px;top:calc(63px + env(safe-area-inset-top));
+    flex-direction:column;padding:7px 10px;border:1px solid rgba(211,159,66,.48);border-radius:10px;
+    background:rgba(13,9,6,.78);pointer-events:none;box-shadow:0 5px 18px rgba(0,0,0,.38)
+  }
+  body.city-mode .city-hud-title strong{font:700 17px Georgia,serif;color:#f1d08a;letter-spacing:.04em}
+  body.city-mode .city-hud-title span{font:9px Arial,sans-serif;color:#c2b49a;text-transform:uppercase;letter-spacing:.12em}
+
+  body.city-mode .game-dock{height:calc(69px + env(safe-area-inset-bottom));padding:4px max(4px,env(safe-area-inset-left)) calc(4px + env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-right))}
+  body.city-mode .game-dock .nav-btn{font-size:8.5px;padding:3px 1px}
+  body.city-mode .game-dock .nav-btn .dock-icon{height:22px;font-size:18px}
+
+  body:not(.city-mode) .status-grid{position:static}
+}
+
+@media(min-width:761px){
+  body.city-mode .city-map-shell{height:min(76vh,860px)}
+  body.city-mode #view-city .vallis-map{height:100%;width:auto;min-width:100%;aspect-ratio:1536/900!important;background-size:cover!important}
+}
