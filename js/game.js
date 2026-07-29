@@ -1,7 +1,12 @@
 let state=loadGame();const $=id=>document.getElementById(id);
 function rarityClass(r){return`rarity-${r||"common"}`;}
 function showView(name){const target=$(`view-${name}`);if(!target)return;document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));target.classList.add("active");document.querySelector(`.nav-btn[data-view="${name}"]`)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
-function renderHeader(){ $("levelValue").textContent=state.level;$("goldValue").textContent=state.gold;$("energyValue").textContent=state.energy;$("maxEnergyValue").textContent=state.maxEnergy;$("hpValue").textContent=state.hp;$("maxHpValue").textContent=state.maxHp;$("xpLabel").textContent=`${state.xp} / ${state.xpNext}`;$("xpBar").style.width=`${Math.min(100,state.xp/state.xpNext*100)}%`;$("regenLabel").textContent=state.energy>=state.maxEnergy?"pełna":"1 punkt za sekundę";}
+function mountRewardMultiplier(){return state.equippedMount==="imperialLion"?1.10:state.equippedMount==="warHorse"?1.05:1;}
+function mountDamageMultiplier(){return state.equippedMount==="direWolf"?1.05:1;}
+function estateXpMultiplier(){return 1+Math.max(0,(state.estate?.trainingYard||1)-1)*.03;}
+function renderHeader(){
+  const phaseBadge=$("worldPhaseBadge");if(phaseBadge){phaseBadge.textContent=state.worldPhase==="night"?"NOC":"DZIEŃ";phaseBadge.classList.toggle("night",state.worldPhase==="night");}
+  $("levelValue").textContent=state.level;$("goldValue").textContent=state.gold;$("energyValue").textContent=state.energy;$("maxEnergyValue").textContent=state.maxEnergy;$("hpValue").textContent=state.hp;$("maxHpValue").textContent=state.maxHp;$("xpLabel").textContent=`${state.xp} / ${state.xpNext}`;$("xpBar").style.width=`${Math.min(100,state.xp/state.xpNext*100)}%`;$("regenLabel").textContent=state.energy>=state.maxEnergy?"pełna":"1 punkt za sekundę";}
 function isRegionUnlocked(region){return state.profileType==="gm"||state.worldUnlocked||state.level>=region.unlockLevel;}
 function renderWorld(){
   $("worldMap").innerHTML=GAME_DATA.regions.map(r=>`<article class="world-node ${state.selectedRegion===r.id?"active":""} ${isRegionUnlocked(r)?"":"locked"}"><p class="eyebrow">${isRegionUnlocked(r)?"ODKRYTO":"ZABLOKOWANE"}</p><h3>${r.name}</h3><p>${r.description}</p><span class="small">Wymagany poziom: ${r.unlockLevel}</span>${isRegionUnlocked(r)?`<br><button class="item-btn primary" data-region="${r.id}">Wybierz region</button>`:""}</article>`).join("");
@@ -13,7 +18,14 @@ function renderEnemies(){
   if(expeditionTitle)expeditionTitle.textContent=region?`Wyprawy — ${region.name}`:"Wyprawy";
   const enemies=GAME_DATA.enemies.filter(e=>e.region===state.selectedRegion);
   $("enemyList").innerHTML=enemies.map(e=>`<article class="enemy-card ${e.boss?"boss-card":""}"><h3>${e.name}</h3><div class="enemy-meta">Życie: ${e.hp}<br>Atak: ${e.attack}<br>Nagroda: ${e.xp} XP, ${e.gold[0]}–${e.gold[1]} złota</div><span class="danger">${e.danger}</span><br><button class="fight-btn" data-enemy="${e.id}">Walcz</button></article>`).join("")||`<p class="small">Brak dostępnych przeciwników.</p>`;
-  document.querySelectorAll("[data-enemy]").forEach(b=>b.onclick=()=>{const enemy=GAME_DATA.enemies.find(e=>e.id===b.dataset.enemy);const result=runCombat(state,enemy);$("battleReport").classList.remove("hidden");$("battleReport").innerHTML=`<strong>${result.title}</strong><p>${result.summary}</p>${result.log.length?`<details><summary>Przebieg walki</summary><ol>${result.log.map(x=>`<li>${x}</li>`).join("")}</ol></details>`:""}`;persistAndRender();});
+  document.querySelectorAll("[data-enemy]").forEach(b=>b.onclick=()=>{const enemy=GAME_DATA.enemies.find(e=>e.id===b.dataset.enemy);const beforeGold=state.gold,beforeXp=state.xp;const result=runCombat(state,enemy);
+      if(result.victory){
+        const goldBonus=Math.max(0,Math.round((state.gold-beforeGold)*(mountRewardMultiplier()-1)));
+        const xpBonus=Math.max(0,Math.round((state.xp-beforeXp)*(estateXpMultiplier()-1)));
+        state.gold+=goldBonus;state.xp+=xpBonus;
+        if(state.worldPhase==="night"){state.gold+=Math.round((state.gold-beforeGold)*.08);}
+      }
+      $("battleReport").classList.remove("hidden");$("battleReport").innerHTML=`<strong>${result.title}</strong><p>${result.summary}</p>${result.log.length?`<details><summary>Przebieg walki</summary><ol>${result.log.map(x=>`<li>${x}</li>`).join("")}</ol></details>`:""}`;persistAndRender();});
 }
 function renderStats(){
   $("statsList").innerHTML=Object.entries(state.stats).map(([k,v])=>`<div class="stat-row"><span>${GAME_DATA.statLabels[k]}</span><div class="stat-actions"><strong>${v}</strong><button data-stat="${k}" ${state.statPoints<1?"disabled":""}>+</button></div></div>`).join("");
@@ -203,6 +215,167 @@ function refreshAuction(){
   state.chronicle.unshift("Odświeżono oferty Domu Aukcyjnego.");
   $("auctionStatus").textContent="Pojawiły się nowe oferty.";persistAndRender();
 }
+
+function randBetween(range){return Math.floor(Math.random()*(range[1]-range[0]+1))+range[0];}
+function addReputation(faction,amount){
+  state.reputation[faction]=Math.max(0,(state.reputation[faction]||0)+amount);
+}
+function reputationRank(value){
+  if(value>=100)return"Legenda";if(value>=60)return"Sprzymierzeniec";if(value>=30)return"Zaufany";if(value>=10)return"Znany";return"Obcy";
+}
+function renderImperium(){
+  if(!$("professionList"))return;
+  $("phaseLabel").textContent=state.worldPhase==="night"?"Noc":"Dzień";
+  $("dayNightDescription").textContent=state.worldPhase==="night"
+    ?"Nocne wyprawy dają 8% więcej złota, ale świat staje się bardziej niebezpieczny."
+    :"Za dnia handel i podróże są bezpieczniejsze. Noc możesz włączyć testowo.";
+  const profession=GAME_DATA.professions.find(p=>p.id===state.profession);
+  $("professionSummary").textContent=profession?`${profession.name} · poz. ${state.professionLevel}`:"Nie wybrano";
+  const mount=GAME_DATA.mounts.find(m=>m.id===state.equippedMount);
+  $("mountSummary").textContent=mount?mount.name:"Brak";
+  $("fortSummary").textContent=`${Object.values(state.forts).filter(Boolean).length}/${GAME_DATA.forts.length}`;
+
+  $("professionList").innerHTML=GAME_DATA.professions.map(p=>`<button class="system-option ${state.profession===p.id?"selected":""}" data-profession="${p.id}">
+    <span class="system-icon">${p.icon}</span><span><strong>${p.name}</strong><small>${p.description}</small></span>
+  </button>`).join("");
+  document.querySelectorAll("[data-profession]").forEach(b=>b.onclick=()=>{
+    state.profession=b.dataset.profession;state.professionLevel=1;state.professionXp=0;
+    state.chronicle.unshift(`Wybrano profesję: ${GAME_DATA.professions.find(p=>p.id===state.profession).name}.`);
+    persistAndRender();
+  });
+
+  $("fortList").innerHTML=GAME_DATA.forts.map(f=>{
+    const owned=Boolean(state.forts[f.id]),locked=state.level<f.level&&state.profileType!=="gm";
+    return `<div class="fort-card ${owned?"owned":""}">
+      <strong>${f.name}</strong><p>${f.description}</p><small>Dochód: ${f.income} złota · wymagany poziom ${f.level}</small>
+      <button class="item-btn primary" data-fort="${f.id}" ${owned||locked?"disabled":""}>${owned?"Przejęty":locked?"Za niski poziom":`Przejmij za ${f.cost} złota`}</button>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("[data-fort]").forEach(b=>b.onclick=()=>captureFort(b.dataset.fort));
+
+  $("mountList").innerHTML=GAME_DATA.mounts.map(m=>{
+    const owned=state.ownedMounts.includes(m.id),equipped=state.equippedMount===m.id,locked=state.level<m.level&&state.profileType!=="gm";
+    return `<div class="mount-row"><span class="system-icon">${m.icon}</span><div><strong>${m.name}</strong><small>${m.bonus}</small></div>
+      <button class="item-btn ${equipped?"":"primary"}" data-mount="${m.id}" ${locked?"disabled":""}>${equipped?"Założony":owned?"Dosiądź":`Kup ${m.cost}`}</button></div>`;
+  }).join("");
+  document.querySelectorAll("[data-mount]").forEach(b=>b.onclick=()=>handleMount(b.dataset.mount));
+
+  const factionNames={legion:"Legion Vallis",merchants:"Liga Kupców",freefolk:"Wolne Klany"};
+  $("reputationList").innerHTML=Object.entries(state.reputation).map(([id,value])=>`<div class="reputation-row">
+    <div><strong>${factionNames[id]}</strong><small>${reputationRank(value)} · ${value} pkt</small></div>
+    <div class="rep-track"><span style="width:${Math.min(100,value)}%"></span></div>
+  </div>`).join("");
+
+  renderVoyages();
+  renderEstate();
+}
+function toggleWorldPhase(){
+  state.worldPhase=state.worldPhase==="day"?"night":"day";
+  state.chronicle.unshift(`Nastała ${state.worldPhase==="night"?"noc":"pora dnia"}.`);
+  persistAndRender();
+}
+function workProfession(){
+  const p=GAME_DATA.professions.find(x=>x.id===state.profession);
+  if(!p){$("professionStatus").textContent="Najpierw wybierz profesję.";return;}
+  const now=Date.now(),cooldown=30000;
+  if(now-state.professionLastWork<cooldown&&state.profileType!=="gm"){
+    $("professionStatus").textContent=`Odpoczynek: ${Math.ceil((cooldown-(now-state.professionLastWork))/1000)} s.`;return;
+  }
+  const earned=Math.round((p.baseGold+state.professionLevel*8)*mountRewardMultiplier());
+  state.gold+=earned;state.professionXp+=25;state.professionLastWork=now;addReputation(p.reputation,2);
+  if(state.professionXp>=state.professionLevel*100){state.professionXp-=state.professionLevel*100;state.professionLevel++;state.chronicle.unshift(`Profesja ${p.name} awansowała na poziom ${state.professionLevel}.`);}
+  $("professionStatus").textContent=`Zarobiono ${earned} złota. Postęp profesji: ${state.professionXp}/${state.professionLevel*100}.`;
+  persistAndRender();
+}
+function captureFort(id){
+  const f=GAME_DATA.forts.find(x=>x.id===id);if(!f||state.forts[id])return;
+  if(state.level<f.level&&state.profileType!=="gm"){return;}
+  if(state.gold<f.cost){$("fortStatus").textContent="Masz za mało złota.";return;}
+  state.gold-=f.cost;state.forts[id]=true;addReputation(f.reputation,10);
+  state.chronicle.unshift(`Przejęto ${f.name}.`);$("fortStatus").textContent=`${f.name} jest pod twoją kontrolą.`;persistAndRender();
+}
+function claimFortIncome(){
+  const owned=GAME_DATA.forts.filter(f=>state.forts[f.id]);
+  if(!owned.length){$("fortStatus").textContent="Nie kontrolujesz żadnego fortu.";return;}
+  const now=Date.now(),cooldown=60000;
+  if(now-state.fortIncomeLastClaim<cooldown&&state.profileType!=="gm"){
+    $("fortStatus").textContent=`Kolejny pobór za ${Math.ceil((cooldown-(now-state.fortIncomeLastClaim))/1000)} s.`;return;
+  }
+  const income=Math.round(owned.reduce((s,f)=>s+f.income,0)*mountRewardMultiplier());
+  state.gold+=income;state.fortIncomeLastClaim=now;$("fortStatus").textContent=`Odebrano ${income} złota.`;
+  state.chronicle.unshift(`Forty przekazały ${income} złota.`);persistAndRender();
+}
+function handleMount(id){
+  const m=GAME_DATA.mounts.find(x=>x.id===id);if(!m)return;
+  if(!state.ownedMounts.includes(id)){
+    if(state.gold<m.cost){$("mountStatus").textContent="Masz za mało złota.";return;}
+    state.gold-=m.cost;state.ownedMounts.push(id);state.chronicle.unshift(`Kupiono wierzchowca: ${m.name}.`);
+  }
+  state.equippedMount=id;$("mountStatus").textContent=`Aktywny wierzchowiec: ${m.name}.`;persistAndRender();
+}
+function renderVoyages(){
+  const now=Date.now();
+  if(state.voyage){
+    const v=GAME_DATA.voyages.find(x=>x.id===state.voyage.id),remaining=Math.max(0,state.voyage.endsAt-now);
+    if(remaining<=0){
+      $("voyageList").innerHTML=`<div class="voyage-card ready"><strong>${v.name}</strong><p>Statek wrócił do portu.</p><button class="primary-btn" id="claimVoyageBtn">Odbierz nagrodę</button></div>`;
+      $("claimVoyageBtn").onclick=claimVoyage;return;
+    }
+    $("voyageList").innerHTML=`<div class="voyage-card active"><strong>${v.name}</strong><p>Powrót za ${Math.ceil(remaining/1000)} s.</p><div class="progress-track"><div class="progress-fill" style="width:${Math.max(2,100-remaining/(v.duration*10))}%"></div></div></div>`;
+    return;
+  }
+  $("voyageList").innerHTML=GAME_DATA.voyages.map(v=>`<div class="voyage-card"><strong>${v.name}</strong><p>Czas: ${v.duration} s · koszt: ${v.cost} złota</p><small>Nagroda: ${v.reward[0]}–${v.reward[1]} złota</small><button class="item-btn primary" data-voyage="${v.id}">Wyślij statek</button></div>`).join("");
+  document.querySelectorAll("[data-voyage]").forEach(b=>b.onclick=()=>startVoyage(b.dataset.voyage));
+}
+function startVoyage(id){
+  const v=GAME_DATA.voyages.find(x=>x.id===id);if(!v)return;
+  if(state.gold<v.cost){$("voyageStatus").textContent="Masz za mało złota.";return;}
+  state.gold-=v.cost;state.voyage={id,endsAt:Date.now()+v.duration*1000};
+  state.chronicle.unshift(`Wysłano statek: ${v.name}.`);persistAndRender();
+}
+function claimVoyage(){
+  if(!state.voyage)return;const v=GAME_DATA.voyages.find(x=>x.id===state.voyage.id);
+  if(Date.now()<state.voyage.endsAt&&state.profileType!=="gm")return;
+  const reward=Math.round(randBetween(v.reward)*mountRewardMultiplier());
+  state.gold+=reward;addReputation(v.reputation,5);state.voyageHistory.unshift({id:v.id,reward,time:Date.now()});state.voyage=null;
+  $("voyageStatus").textContent=`Flota przywiozła ${reward} złota.`;state.chronicle.unshift(`Ekspedycja „${v.name}” wróciła z ${reward} złota.`);persistAndRender();
+}
+function estateUpgradeCost(level){return 180*level*level;}
+function estateIncome(){return state.estate.workshop*45+state.estate.storehouse*30+state.estate.trainingYard*20;}
+function renderEstate(){
+  $("estateList").innerHTML=GAME_DATA.estateBuildings.map(b=>{
+    const level=state.estate[b.id]||1,cost=estateUpgradeCost(level);
+    return `<div class="estate-card"><span class="system-icon">${b.icon}</span><strong>${b.name} · poziom ${level}</strong><p>${b.description}</p><button class="item-btn primary" data-estate="${b.id}">Ulepsz za ${cost} złota</button></div>`;
+  }).join("");
+  document.querySelectorAll("[data-estate]").forEach(b=>b.onclick=()=>upgradeEstate(b.dataset.estate));
+}
+function upgradeEstate(id){
+  const level=state.estate[id]||1,cost=estateUpgradeCost(level);
+  if(state.gold<cost){$("estateStatus").textContent="Masz za mało złota.";return;}
+  state.gold-=cost;state.estate[id]=level+1;state.chronicle.unshift(`Ulepszono ${GAME_DATA.estateBuildings.find(b=>b.id===id).name} do poziomu ${level+1}.`);
+  persistAndRender();
+}
+function claimEstateIncome(){
+  const now=Date.now(),cooldown=60000;
+  if(now-state.estateIncomeLastClaim<cooldown&&state.profileType!=="gm"){
+    $("estateStatus").textContent=`Dochód będzie gotowy za ${Math.ceil((cooldown-(now-state.estateIncomeLastClaim))/1000)} s.`;return;
+  }
+  const income=Math.round(estateIncome()*mountRewardMultiplier());state.gold+=income;state.estateIncomeLastClaim=now;
+  $("estateStatus").textContent=`Odebrano ${income} złota z posiadłości.`;state.chronicle.unshift(`Posiadłość przyniosła ${income} złota.`);persistAndRender();
+}
+function triggerRandomEvent(){
+  if(state.energy<1&&state.profileType!=="gm"){$("eventStatus").textContent="Brakuje wytrzymałości.";return;}
+  if(state.profileType!=="gm")state.energy--;
+  const event=GAME_DATA.randomEvents[Math.floor(Math.random()*GAME_DATA.randomEvents.length)];
+  let gold=event.gold?randBetween(event.gold):0,xp=event.xp?randBetween(event.xp):0;
+  if(gold>0)gold=Math.round(gold*mountRewardMultiplier());
+  state.gold=Math.max(0,state.gold+gold);state.xp+=xp;Object.entries(event.rep||{}).forEach(([f,v])=>addReputation(f,v));
+  state.lastRandomEvent={id:event.id,name:event.name,text:event.text,gold,xp};state.randomEventCount++;
+  $("eventCard").innerHTML=`<strong>${event.name}</strong><p>${event.text}</p><div class="event-reward">${gold?`${gold>0?"+":""}${gold} złota`:""} ${xp?`+${xp} XP`:""}</div>`;
+  $("eventStatus").textContent=`Liczba odkrytych wydarzeń: ${state.randomEventCount}.`;state.chronicle.unshift(`Wydarzenie: ${event.name}.`);
+  persistAndRender();
+}
+
 function processEnergyRegeneration(){if(state.energy>=state.maxEnergy){state.lastEnergyTick=Date.now();return;}const now=Date.now(),points=Math.floor((now-state.lastEnergyTick)/GAME_DATA.energyRegenMs);if(points>0){state.energy=Math.min(state.maxEnergy,state.energy+points);state.lastEnergyTick+=points*GAME_DATA.energyRegenMs;saveGame(state);renderHeader();}}
 function openDialogue(id){const d=GAME_DATA.dialogues[id];if(!d)return;$("dialogueImage").src=d.image||"";$("dialogueImage").alt=d.name;$("dialogueRole").textContent=d.role;$("dialogueName").textContent=d.name;$("dialogueText").textContent=d.text;$("dialogueModal").classList.remove("hidden");}
 
@@ -302,7 +475,7 @@ function exitGm(){
 }
 
 function persistAndRender(){saveGame(state);renderAll();}
-function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderForge();renderAuction();renderBestiary();renderChronicle();renderGm();}
+function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderForge();renderAuction();renderBestiary();renderImperium();renderChronicle();renderGm();}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));
 document.querySelectorAll("[data-dialogue]").forEach(b=>b.onclick=()=>openDialogue(b.dataset.dialogue));$("closeDialogue").onclick=()=>$("dialogueModal").classList.add("hidden");$("dialogueModal").onclick=e=>{if(e.target===$("dialogueModal"))$("dialogueModal").classList.add("hidden");};
 if($("bestiaryRegionFilter"))$("bestiaryRegionFilter").onchange=renderBestiary;
@@ -310,6 +483,13 @@ if($("bestiaryStateFilter"))$("bestiaryStateFilter").onchange=renderBestiary;
 if($("auctionFilter"))$("auctionFilter").onchange=renderAuction;
 if($("auctionSort"))$("auctionSort").onchange=renderAuction;
 if($("refreshAuctionBtn"))$("refreshAuctionBtn").onclick=refreshAuction;
+
+if($("togglePhaseBtn"))$("togglePhaseBtn").onclick=toggleWorldPhase;
+if($("professionWorkBtn"))$("professionWorkBtn").onclick=workProfession;
+if($("claimFortIncomeBtn"))$("claimFortIncomeBtn").onclick=claimFortIncome;
+if($("claimEstateIncomeBtn"))$("claimEstateIncomeBtn").onclick=claimEstateIncome;
+if($("randomEventBtn"))$("randomEventBtn").onclick=triggerRandomEvent;
+
 $("repairBtn").onclick=repairAll;$("upgradeBtn").onclick=upgradeSelected;$("sellJunkBtn").onclick=sellAllTrophies;$("inventoryFilter").onchange=renderInventory;$("inventorySort").onchange=renderInventory;
 
 $("gmLoginBtn").onclick=activateGm;
@@ -323,4 +503,4 @@ $("gmClearInventoryBtn").onclick=gmClearInventory;
 $("gmExitBtn").onclick=exitGm;
 
 $("resetGameBtn").onclick=()=>{if(!confirm("Usunąć zapis i rozpocząć nową grę?"))return;resetSave();state=createNewState();$("battleReport").classList.add("hidden");persistAndRender();showView("city");};
-processEnergyRegeneration();renderAll();setInterval(()=>{processEnergyRegeneration();renderBuffs();},250);
+processEnergyRegeneration();renderAll();setInterval(()=>{processEnergyRegeneration();renderBuffs();if(document.getElementById("view-imperium")?.classList.contains("active"))renderImperium();},1000);

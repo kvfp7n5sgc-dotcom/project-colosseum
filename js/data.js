@@ -1,5 +1,5 @@
 const GAME_DATA = {
-  version:"0.8.0",
+  version:"0.9.0",
   energyRegenMs:1000,
   inventoryLimit:30,
   gmInventoryLimit:250,
@@ -152,6 +152,43 @@ const GAME_DATA = {
   ],
 
 
+
+
+  professions:[
+    {id:"miner",name:"Górnik",icon:"⛏️",description:"Wydobywa rudę i zwiększa zyski z kopalni.",baseGold:42,reputation:"freefolk"},
+    {id:"blacksmith",name:"Kowal",icon:"🔨",description:"Wytwarza części uzbrojenia i obniża koszty kuźni.",baseGold:38,reputation:"legion"},
+    {id:"hunter",name:"Łowca",icon:"🏹",description:"Poluje na bestie i zdobywa trofea.",baseGold:45,reputation:"freefolk"},
+    {id:"merchant",name:"Kupiec",icon:"⚖️",description:"Handluje towarami i buduje kontakty.",baseGold:50,reputation:"merchants"}
+  ],
+  forts:[
+    {id:"vallisGate",name:"Fort Bramy Vallis",level:3,cost:300,income:55,reputation:"legion",description:"Kontroluje główny trakt do Vallis."},
+    {id:"riverWatch",name:"Strażnica Rzeki",level:7,cost:700,income:110,reputation:"merchants",description:"Chroni barki kupieckie i przeprawy."},
+    {id:"ashPass",name:"Fort Popielnej Przełęczy",level:12,cost:1500,income:230,reputation:"freefolk",description:"Strzeże drogi prowadzącej ku Ashmoor."}
+  ],
+  mounts:[
+    {id:"warHorse",name:"Koń wojenny",icon:"🐎",cost:450,level:3,bonus:"+5% złota z wypraw"},
+    {id:"desertLizard",name:"Jaszczur pustynny",icon:"🦎",cost:950,level:8,bonus:"+1 maks. wytrzymałości"},
+    {id:"direWolf",name:"Wilk bojowy",icon:"🐺",cost:1800,level:13,bonus:"+5% obrażeń"},
+    {id:"imperialLion",name:"Lew Imperium",icon:"🦁",cost:4200,level:20,bonus:"+10% wszystkich nagród"}
+  ],
+  voyages:[
+    {id:"coast",name:"Patrol wybrzeża",duration:60,reward:[110,170],cost:40,reputation:"merchants"},
+    {id:"islands",name:"Wyspy Przemytników",duration:180,reward:[300,450],cost:110,reputation:"freefolk"},
+    {id:"deepSea",name:"Morze Czarnego Słońca",duration:420,reward:[750,1100],cost:280,reputation:"legion"}
+  ],
+  estateBuildings:[
+    {id:"workshop",name:"Warsztat",icon:"🔨",description:"Zwiększa dochód z posiadłości."},
+    {id:"storehouse",name:"Magazyn",icon:"📦",description:"Zwiększa pojemność i wartość zapasów."},
+    {id:"trainingYard",name:"Plac treningowy",icon:"⚔️",description:"Daje stały bonus do zdobywanego doświadczenia."}
+  ],
+  randomEvents:[
+    {id:"merchant",name:"Wędrowny kupiec",text:"Kupiec płaci ci za ochronę karawany.",gold:[45,90],rep:{merchants:4}},
+    {id:"ambush",name:"Zasadzka bandytów",text:"Rozbijasz zasadzkę i zabierasz łupy.",gold:[25,65],xp:[35,70],rep:{legion:3}},
+    {id:"temple",name:"Ukryta świątynia",text:"Odnajdujesz relikt pozostawiony przez dawny kult.",gold:[80,130],xp:[55,100],rep:{freefolk:4}},
+    {id:"refugees",name:"Uchodźcy na trakcie",text:"Oddajesz część zapasów potrzebującym. Wieść o tym szybko się rozchodzi.",gold:[-35,-20],rep:{freefolk:8,legion:2}},
+    {id:"tax",name:"Poborca podatkowy",text:"Dokumenty są w porządku, ale opłata drogowa boli.",gold:[-55,-25],rep:{legion:1}},
+    {id:"treasure",name:"Zakopana skrzynia",text:"Pod starym kamieniem znajdujesz zapomnianą skrzynię.",gold:[120,220],xp:[20,50]}
+  ],
 
   auctionNames:{
     weapon:["Gladius Najemnika","Miecz Karawan","Topór Areny","Ostrze Popiołu","Miecz Strażnika"],
