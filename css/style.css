@@ -233,3 +233,45 @@ select{background:#211911;color:var(--text);border:1px solid var(--border);borde
 .route-line{position:absolute;height:5px;background:linear-gradient(90deg,#674821,#d0a34e);transform-origin:left center;border-radius:99px;opacity:.55;z-index:0}.route-1{left:19%;top:59%;width:15%;transform:rotate(-35deg)}.route-2{left:42%;top:40%;width:16%;transform:rotate(-35deg)}.route-3{left:65%;top:27%;width:14%;transform:rotate(31deg)}.route-4{left:64%;top:52%;width:16%;transform:rotate(42deg)}.route-5{left:63%;top:71%;width:15%;transform:rotate(15deg)}.route-6{left:42%;top:75%;width:17%;transform:rotate(-18deg)}.route-7{left:16%;top:34%;width:18%;transform:rotate(35deg)}
 .expedition-zone-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.region-strip{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 14px;scrollbar-width:thin}.region-chip{flex:0 0 auto;padding:9px 12px;border:1px solid rgba(201,150,58,.3);border-radius:999px;background:#21170f;color:#cfc4b4}.region-chip.active{border-color:#e0b255;background:#64451e;color:#fff3d5}.region-chip:disabled{opacity:.4}.expedition-enemies{margin-top:4px}
 @media(max-width:760px){.vallis-map{min-height:680px;background-position:center}.compact-title{left:10px;top:10px;max-width:250px}.map-hotspot{padding:5px;min-height:38px}.map-hotspot strong{display:none}.map-hotspot span{width:29px;height:29px}.spot-arena{left:22%;top:31%}.spot-forge{left:72%;top:44%}.spot-market{left:42%;top:54%}.spot-auction{left:72%;top:66%}.spot-barracks{left:80%;top:27%}.spot-house{left:48%;top:73%}.spot-gate{left:14%;top:63%}.spot-archive{left:87%;top:80%}.spot-port{left:23%;top:82%}.city-map-legend{margin-top:-65px}.city-map-legend span{display:none}.expedition-map-shell,.expedition-route-map{min-height:1030px}.route-node{width:150px;min-height:128px;padding:10px!important}.route-node p{display:none}.route-node h3{font-size:.9rem}.node-1{left:4%;top:76%}.node-2{left:48%;top:62%}.node-3{left:4%;top:47%}.node-4{left:48%;top:33%}.node-5{left:4%;top:19%}.node-6{left:48%;top:5%}.node-7{left:48%;top:80%}.node-8{left:4%;top:5%}.route-line{display:none}.expedition-zone-head{align-items:flex-start;flex-direction:column}}
+
+/* v0.11.1 — budynki są bezpośrednimi polami dotyku */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.vallis-map .map-hotspot{
+  position:absolute;z-index:8;display:block;min-height:0;padding:0;border:0;border-radius:18px;
+  background:transparent;box-shadow:none;transform:none;backdrop-filter:none;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.vallis-map .map-hotspot::after{
+  content:attr(aria-label);position:absolute;left:50%;bottom:100%;transform:translate(-50%,-8px);
+  padding:7px 10px;border:1px solid rgba(240,195,94,.85);border-radius:9px;
+  background:rgba(20,13,8,.94);color:#fff2d0;font-weight:800;font-size:.78rem;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .12s ease;
+}
+.vallis-map .map-hotspot:hover,.vallis-map .map-hotspot:focus-visible{
+  filter:none;outline:2px solid rgba(245,197,91,.95);outline-offset:2px;
+  background:rgba(241,183,66,.12);box-shadow:0 0 22px rgba(234,171,55,.3) inset,0 0 18px rgba(234,171,55,.22);
+}
+.vallis-map .map-hotspot:hover::after,.vallis-map .map-hotspot:focus-visible::after{opacity:1}
+.vallis-map .map-hotspot:active{background:rgba(255,205,96,.25);transform:scale(.98)}
+/* Pola odpowiadają konkretnym budynkom na obecnej grafice Vallis */
+.vallis-map .spot-arena{left:8%;top:20%;width:28%;height:25%}
+.vallis-map .spot-barracks{left:66%;top:13%;width:28%;height:25%}
+.vallis-map .spot-forge{left:61%;top:34%;width:25%;height:22%}
+.vallis-map .spot-market{left:29%;top:43%;width:28%;height:20%}
+.vallis-map .spot-gate{left:2%;top:58%;width:25%;height:19%}
+.vallis-map .spot-auction{left:61%;top:57%;width:27%;height:18%}
+.vallis-map .spot-house{left:34%;top:63%;width:26%;height:20%}
+.vallis-map .spot-port{left:4%;top:75%;width:31%;height:20%}
+.vallis-map .spot-archive{left:72%;top:73%;width:25%;height:22%}
+@media(max-width:760px){
+  .vallis-map .map-hotspot{padding:0;min-height:0}
+  .vallis-map .spot-arena{left:5%;top:19%;width:31%;height:25%}
+  .vallis-map .spot-barracks{left:67%;top:13%;width:29%;height:23%}
+  .vallis-map .spot-forge{left:60%;top:35%;width:28%;height:20%}
+  .vallis-map .spot-market{left:28%;top:45%;width:31%;height:19%}
+  .vallis-map .spot-gate{left:1%;top:59%;width:27%;height:18%}
+  .vallis-map .spot-auction{left:61%;top:58%;width:29%;height:17%}
+  .vallis-map .spot-house{left:32%;top:64%;width:29%;height:19%}
+  .vallis-map .spot-port{left:2%;top:76%;width:34%;height:20%}
+  .vallis-map .spot-archive{left:72%;top:75%;width:27%;height:20%}
+}
