@@ -1,6 +1,19 @@
 let state=loadGame();const $=id=>document.getElementById(id);
 function rarityClass(r){return`rarity-${r||"common"}`;}
-function showView(name){const target=$(`view-${name}`);if(!target)return;document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".game-dock .nav-btn").forEach(b=>b.classList.remove("active"));target.classList.add("active");const direct=document.querySelector(`.game-dock .nav-btn[data-view="${name}"]`);if(direct)direct.classList.add("active");else $("moreNavBtn")?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
+function showView(name){
+  const target=$(`view-${name}`);if(!target)return;
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".game-dock .nav-btn").forEach(b=>b.classList.remove("active"));
+  target.classList.add("active");
+  document.body.classList.toggle("city-mode",name==="city");
+  const direct=document.querySelector(`.game-dock .nav-btn[data-view="${name}"]`);
+  if(direct)direct.classList.add("active");else $("moreNavBtn")?.classList.add("active");
+  window.scrollTo({top:0,behavior:name==="city"?"auto":"smooth"});
+  if(name==="city") requestAnimationFrame(()=>{
+    const shell=document.querySelector("#view-city .city-map-shell");
+    if(shell && !shell.dataset.centered){shell.scrollLeft=Math.max(0,(shell.scrollWidth-shell.clientWidth)/2);shell.dataset.centered="1";}
+  });
+}
 function mountRewardMultiplier(){return state.equippedMount==="imperialLion"?1.10:state.equippedMount==="warHorse"?1.05:1;}
 function mountDamageMultiplier(){return state.equippedMount==="direWolf"?1.05:1;}
 function estateXpMultiplier(){return 1+Math.max(0,(state.estate?.trainingYard||1)-1)*.03;}
@@ -492,6 +505,7 @@ function exitGm(){
 
 function persistAndRender(){saveGame(state);renderAll();}
 function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderForge();renderAuction();renderBestiary();renderImperium();renderArena();renderDungeons();renderSkills();renderChronicle();renderGm();}
+document.body.classList.add("city-mode");
 document.querySelectorAll(".nav-btn[data-view]").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{showView(b.dataset.open);closeMoreMenu();});
 const moreMenu=$("moreMenu"),moreNavBtn=$("moreNavBtn");
