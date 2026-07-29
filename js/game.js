@@ -9,13 +9,18 @@ function renderHeader(){
   $("levelValue").textContent=state.level;$("goldValue").textContent=state.gold;$("energyValue").textContent=state.energy;$("maxEnergyValue").textContent=state.maxEnergy;$("hpValue").textContent=state.hp;$("maxHpValue").textContent=state.maxHp;$("xpLabel").textContent=`${state.xp} / ${state.xpNext}`;$("xpBar").style.width=`${Math.min(100,state.xp/state.xpNext*100)}%`;$("regenLabel").textContent=state.energy>=state.maxEnergy?"pełna":"1 punkt za sekundę";}
 function isRegionUnlocked(region){return state.profileType==="gm"||state.worldUnlocked||state.level>=region.unlockLevel;}
 function renderWorld(){
-  $("worldMap").innerHTML=GAME_DATA.regions.map(r=>`<article class="world-node ${state.selectedRegion===r.id?"active":""} ${isRegionUnlocked(r)?"":"locked"}"><p class="eyebrow">${isRegionUnlocked(r)?"ODKRYTO":"ZABLOKOWANE"}</p><h3>${r.name}</h3><p>${r.description}</p><span class="small">Wymagany poziom: ${r.unlockLevel}</span>${isRegionUnlocked(r)?`<br><button class="item-btn primary" data-region="${r.id}">Wybierz region</button>`:""}</article>`).join("");
+  const map=$("worldMap");if(!map)return;
+  map.innerHTML=GAME_DATA.regions.map((r,index)=>`<article class="world-node route-node node-${index+1} ${state.selectedRegion===r.id?"active":""} ${isRegionUnlocked(r)?"":"locked"}" data-region-card="${r.id}">
+    <span class="node-number">${index+1}</span><span class="node-status">${isRegionUnlocked(r)?"ODKRYTO":"🔒"}</span><h3>${r.name}</h3><p>${r.description}</p><small>Poziom ${r.unlockLevel}+</small>
+    ${isRegionUnlocked(r)?`<button class="item-btn primary" data-region="${r.id}">Wyrusz</button>`:""}
+  </article>`).join("");
   document.querySelectorAll("[data-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.region;persistAndRender();showView("expeditions");});
 }
 function renderEnemies(){
   const region=GAME_DATA.regions.find(r=>r.id===state.selectedRegion);
   const expeditionTitle=document.querySelector("#view-expeditions h2");
   if(expeditionTitle)expeditionTitle.textContent=region?`Wyprawy — ${region.name}`:"Wyprawy";
+  const strip=$("expeditionRegionStrip");if(strip){strip.innerHTML=GAME_DATA.regions.map(r=>`<button class="region-chip ${r.id===state.selectedRegion?"active":""}" data-quick-region="${r.id}" ${isRegionUnlocked(r)?"":"disabled"}>${r.name}</button>`).join("");document.querySelectorAll("[data-quick-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.quickRegion;persistAndRender();});}
   const enemies=GAME_DATA.enemies.filter(e=>e.region===state.selectedRegion);
   $("enemyList").innerHTML=enemies.map(e=>`<article class="enemy-card ${e.boss?"boss-card":""}"><h3>${e.name}</h3><div class="enemy-meta">Życie: ${e.hp}<br>Atak: ${e.attack}<br>Nagroda: ${e.xp} XP, ${e.gold[0]}–${e.gold[1]} złota</div><span class="danger">${e.danger}</span><br><button class="fight-btn" data-enemy="${e.id}">Walcz</button></article>`).join("")||`<p class="small">Brak dostępnych przeciwników.</p>`;
   document.querySelectorAll("[data-enemy]").forEach(b=>b.onclick=()=>{const enemy=GAME_DATA.enemies.find(e=>e.id===b.dataset.enemy);const beforeGold=state.gold,beforeXp=state.xp;const result=runCombat(state,enemy);
