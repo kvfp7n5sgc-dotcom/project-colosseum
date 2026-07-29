@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.10.0</title>
+  <title>Project Colosseum v0.11.0</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -58,93 +58,78 @@
 
     <main>
       <section id="view-city" class="view active">
-        <div class="city-scene vallis-isometric" aria-label="Interaktywne miasto Vallis">
-          <div class="city-title-card">
-            <p class="eyebrow">MIASTO STARTOWE</p>
-            <h2>Vallis</h2>
-            <p>Wybierz budynek na planie miasta.</p>
-          </div>
+        <div class="city-map-shell">
+          <div class="city-scene vallis-map" aria-label="Interaktywna mapa miasta Vallis">
+            <div class="city-title-card compact-title">
+              <p class="eyebrow">STOLICA IMPERIUM</p>
+              <h2>Vallis</h2>
+              <p>Dotknij znacznika przy budynku.</p>
+            </div>
 
-          <div class="city-district district-arena">
-            <button class="city-building" data-open="expeditions" type="button">
-              <span class="building-symbol">⚔️</span><strong>Arena Vallis</strong><small>Walki i wyprawy</small>
+            <button class="map-hotspot spot-arena" data-open="arena" type="button" aria-label="Arena Vallis">
+              <span>⚔️</span><strong>Arena</strong>
+            </button>
+            <button class="map-hotspot spot-forge" data-open="blacksmith" type="button" aria-label="Kuźnia Brenna">
+              <span>🔨</span><strong>Kuźnia</strong>
+            </button>
+            <button class="map-hotspot spot-market" data-open="merchant" type="button" aria-label="Rynek Vallis">
+              <span>🪙</span><strong>Rynek</strong>
+            </button>
+            <button class="map-hotspot spot-auction" data-open="auction" type="button" aria-label="Dom Aukcyjny">
+              <span>🏛️</span><strong>Aukcje</strong>
+            </button>
+            <button class="map-hotspot spot-barracks" data-open="quests" type="button" aria-label="Koszary">
+              <span>🛡️</span><strong>Koszary</strong>
+            </button>
+            <button class="map-hotspot spot-house" data-open="character" type="button" aria-label="Dom Żelaza">
+              <span>🎒</span><strong>Dom Żelaza</strong>
+            </button>
+            <button class="map-hotspot spot-gate" data-open="world" type="button" aria-label="Brama wypraw">
+              <span>🚪</span><strong>Wyprawy</strong>
+            </button>
+            <button class="map-hotspot spot-archive" data-open="bestiary" type="button" aria-label="Archiwum">
+              <span>📖</span><strong>Archiwum</strong>
+            </button>
+            <button class="map-hotspot spot-port" data-open="imperium" type="button" aria-label="Port Aurelia">
+              <span>⚓</span><strong>Port</strong>
             </button>
           </div>
-          <div class="city-district district-forge">
-            <button class="city-building" data-open="blacksmith" type="button">
-              <span class="building-symbol">🔨</span><strong>Kuźnia Brenna</strong><small>Naprawa i ulepszanie</small>
-            </button>
-          </div>
-          <div class="city-district district-market">
-            <button class="city-building" data-open="merchant" type="button">
-              <span class="building-symbol">🪙</span><strong>Rynek</strong><small>Sklep i mikstury</small>
-            </button>
-          </div>
-          <div class="city-district district-auction">
-            <button class="city-building" data-open="auction" type="button">
-              <span class="building-symbol">🏛️</span><strong>Dom Aukcyjny</strong><small>Oferty handlarzy</small>
-            </button>
-          </div>
-          <div class="city-district district-barracks">
-            <button class="city-building" data-open="quests" type="button">
-              <span class="building-symbol">🛡️</span><strong>Koszary</strong><small>Zadania Marcusa</small>
-            </button>
-          </div>
-          <div class="city-district district-house">
-            <button class="city-building" data-open="character" type="button">
-              <span class="building-symbol">🎒</span><strong>Dom Żelaza</strong><small>Postać i plecak</small>
-            </button>
-          </div>
-          <div class="city-district district-gate">
-            <button class="city-building" data-open="world" type="button">
-              <span class="building-symbol">🚪</span><strong>Brama Vallis</strong><small>Mapa świata</small>
-            </button>
-          </div>
-          <div class="city-district district-archive">
-            <button class="city-building" data-open="bestiary" type="button">
-              <span class="building-symbol">📖</span><strong>Archiwum</strong><small>Bestiariusz</small>
-            </button>
+          <div class="city-map-legend panel">
+            <strong>Szybki dostęp</strong>
+            <span>Dotknij znacznika na mapie. Nie trzeba prowadzić postaci między budynkami.</span>
           </div>
         </div>
 
         <div class="npc-strip city-npcs">
-          <button class="npc-card" data-dialogue="marcus">
-            <img class="npc-portrait" src="assets/npcs/marcus_varro.webp" alt="Marcus Varro">
-            <div><strong>Marcus Varro</strong><span>Mentor i dawny gladiator</span></div>
-          </button>
-          <button class="npc-card" data-dialogue="lydia">
-            <img class="npc-portrait" src="assets/npcs/lydia.webp" alt="Lydia">
-            <div><strong>Lydia</strong><span>Kupczyni z Południa</span></div>
-          </button>
-          <button class="npc-card" data-dialogue="brenn">
-            <img class="npc-portrait" src="assets/npcs/brenn.webp" alt="Brenn">
-            <div><strong>Brenn</strong><span>Kowal Domu Żelaza</span></div>
-          </button>
+          <button class="npc-card" data-dialogue="marcus"><img class="npc-portrait" src="assets/npcs/marcus_varro.webp" alt="Marcus Varro"><div><strong>Marcus Varro</strong><span>Mentor i dawny gladiator</span></div></button>
+          <button class="npc-card" data-dialogue="lydia"><img class="npc-portrait" src="assets/npcs/lydia.webp" alt="Lydia"><div><strong>Lydia</strong><span>Kupczyni z Południa</span></div></button>
+          <button class="npc-card" data-dialogue="brenn"><img class="npc-portrait" src="assets/npcs/brenn.webp" alt="Brenn"><div><strong>Brenn</strong><span>Kowal Domu Żelaza</span></div></button>
         </div>
 
-        <div class="notice panel city-rumor">
-          <strong>Plotka z gospody</strong>
-          <p>W Lesie Cieni zniknęła karawana. Strażnicy znaleźli tylko połamane koła i ślady wielkich łap.</p>
-        </div>
+        <div class="notice panel city-rumor"><p class="eyebrow">PLOTKA Z GOSPODY</p><p>Na północnym trakcie znaleziono ślady karawany. Strażnicy twierdzą, że prowadzą w stronę Lasu Cieni.</p></div>
       </section>
 
       <section id="view-world" class="view">
-        <div class="panel">
-          <p class="eyebrow">ŚWIAT</p>
-          <h2>Mapa regionów</h2>
-          <p>Pokonuj przeciwników i wykonuj zadania, aby odblokowywać kolejne miejsca.</p>
+        <div class="panel expedition-hero">
+          <p class="eyebrow">POZA MURAMI VALLIS</p>
+          <h2>Mapa wypraw</h2>
+          <p>Wybierz odkrytą lokację. Kolejne obszary odblokowują się wraz z poziomem postaci.</p>
         </div>
-        <div id="worldMap" class="world-map"></div>
+        <div class="expedition-map-shell">
+          <div class="route-line route-1"></div><div class="route-line route-2"></div><div class="route-line route-3"></div>
+          <div class="route-line route-4"></div><div class="route-line route-5"></div><div class="route-line route-6"></div><div class="route-line route-7"></div>
+          <div id="worldMap" class="world-map expedition-route-map"></div>
+        </div>
       </section>
 
       <section id="view-expeditions" class="view">
-        <div class="panel">
-          <p class="eyebrow">WALKA</p>
-          <h2>Wyprawy</h2>
-          <p>Każda walka kosztuje 1 punkt Wytrzymałości. Aktywna mikstura może zwiększyć obrażenia.</p>
+        <div class="panel expedition-zone-head">
+          <div><p class="eyebrow">AKTYWNA WYPRAWA</p><h2>Wyprawy</h2><p>Wybierz przeciwnika. Każda walka kosztuje 1 punkt wytrzymałości.</p></div>
+          <button class="primary-btn alt" data-open="world" type="button">Zmień region</button>
         </div>
+        <div id="expeditionRegionStrip" class="region-strip"></div>
         <div id="activeBuffs" class="buff-bar"></div>
-        <div id="enemyList" class="enemy-grid"></div>
+        <div id="enemyList" class="enemy-grid expedition-enemies"></div>
         <div id="battleReport" class="panel report hidden"></div>
       </section>
 
@@ -415,7 +400,7 @@
       </div>
     </div>
 
-    <footer>Project Colosseum v0.10.0 — prototyp testowy</footer>
+    <footer>Project Colosseum v0.11.0 — prototyp testowy</footer>
   </div>
 
   <script src="js/data.js"></script>
