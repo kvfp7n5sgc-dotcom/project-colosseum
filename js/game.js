@@ -70,10 +70,30 @@ function repairAll(){const d=Object.values(state.equipment).some(i=>i&&i.durabil
 function upgradeWeakest(){if(state.gold<60){$("repairStatus").textContent="Masz za mało złota.";return;}const items=Object.values(state.equipment).filter(Boolean);if(!items.length)return;const item=items.sort((a,b)=>a.power-b.power)[0];state.gold-=60;item.power+=1;state.chronicle.unshift(`Brenn ulepszył przedmiot „${item.name}” do mocy ${item.power}.`);$("repairStatus").textContent=`Ulepszono: ${item.name}.`;persistAndRender();}
 function processEnergyRegeneration(){if(state.energy>=state.maxEnergy){state.lastEnergyTick=Date.now();return;}const now=Date.now(),points=Math.floor((now-state.lastEnergyTick)/GAME_DATA.energyRegenMs);if(points>0){state.energy=Math.min(state.maxEnergy,state.energy+points);state.lastEnergyTick+=points*GAME_DATA.energyRegenMs;saveGame(state);renderHeader();}}
 function openDialogue(id){const d=GAME_DATA.dialogues[id];if(!d)return;$("dialogueImage").src=d.image||"";$("dialogueImage").alt=d.name;$("dialogueRole").textContent=d.role;$("dialogueName").textContent=d.name;$("dialogueText").textContent=d.text;$("dialogueModal").classList.remove("hidden");}
+
+
+// v0.5: prosty ambient miasta generowany przez Web Audio API.
+let cityAudio=null;
+function toggleCitySound(){
+  const button=$("soundToggle");
+  if(!button)return;
+  if(cityAudio){
+    cityAudio.ctx.close();cityAudio=null;
+    button.setAttribute("aria-pressed","false");button.textContent="🔇 Dźwięk miasta";return;
+  }
+  const AudioContext=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContext){button.textContent="Dźwięk niedostępny";return;}
+  const ctx=new AudioContext(),master=ctx.createGain(),osc1=ctx.createOscillator(),osc2=ctx.createOscillator(),gain1=ctx.createGain(),gain2=ctx.createGain();
+  master.gain.value=.035;osc1.type="sine";osc2.type="triangle";osc1.frequency.value=82;osc2.frequency.value=123;gain1.gain.value=.6;gain2.gain.value=.22;
+  osc1.connect(gain1).connect(master);osc2.connect(gain2).connect(master);master.connect(ctx.destination);osc1.start();osc2.start();
+  cityAudio={ctx,osc1,osc2};button.setAttribute("aria-pressed","true");button.textContent="🔊 Dźwięk miasta";
+}
+
 function persistAndRender(){saveGame(state);renderAll();}
 function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderChronicle();}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));
 document.querySelectorAll("[data-dialogue]").forEach(b=>b.onclick=()=>openDialogue(b.dataset.dialogue));$("closeDialogue").onclick=()=>$("dialogueModal").classList.add("hidden");$("dialogueModal").onclick=e=>{if(e.target===$("dialogueModal"))$("dialogueModal").classList.add("hidden");};
+$("soundToggle").onclick=toggleCitySound;
 $("repairBtn").onclick=repairAll;$("upgradeBtn").onclick=upgradeWeakest;$("sellJunkBtn").onclick=sellAllTrophies;$("inventoryFilter").onchange=renderInventory;$("inventorySort").onchange=renderInventory;
 $("resetGameBtn").onclick=()=>{if(!confirm("Usunąć zapis i rozpocząć nową grę?"))return;resetSave();state=createNewState();$("battleReport").classList.add("hidden");persistAndRender();showView("city");};
 processEnergyRegeneration();renderAll();setInterval(()=>{processEnergyRegeneration();renderBuffs();},250);
