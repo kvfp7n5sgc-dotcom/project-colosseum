@@ -401,16 +401,25 @@ function dungeonEnemy(room){return GAME_DATA.enemies.find(x=>x.id===room.enemy);
 function dungeonImage(enemy){return enemy?.image||"assets/monster-icons/skeleton.webp";}
 function renderDungeons(){
   if(!$('dungeonList'))return;
+  // Czyścimy uszkodzony zapis aktywnego lochu ze starszych wersji.
+  if(state.dungeonRun&&!GAME_DATA.dungeons.some(d=>d.id===state.dungeonRun.id))state.dungeonRun=null;
   $('dungeonList').innerHTML=GAME_DATA.dungeons.map(d=>{
     const lock=state.level<d.level&&state.profileType!=="gm", completed=state.dungeonsCompleted[d.id]||0, theme=dungeonTheme(d.id);
+    const active=state.dungeonRun&&state.dungeonRun.id===d.id;
     const rooms=d.rooms.map((room,i)=>{const e=dungeonEnemy(room);return `<div class="dungeon-preview-room ${i===d.rooms.length-1?'boss-room':''}"><img src="${dungeonImage(e)}" alt="${e?.name||room.name}"><span>${i===d.rooms.length-1?'BOSS':'KOMNATA '+(i+1)}</span><strong>${e?.name||room.name}</strong></div>`}).join('');
-    return `<article class="dungeon-card dungeon-card-v2 theme-${theme} ${lock?'locked':''}"><div class="dungeon-card-top"><div><span class="dungeon-level">Poziom ${d.level}</span><h3>${d.name}</h3><p>${d.rooms.length} komnaty · koszt ${d.energy} wytrzymałości</p></div><div class="dungeon-completions">Ukończenia<strong>${completed}</strong></div></div><div class="dungeon-room-preview">${rooms}</div><div class="dungeon-reward"><span>Nagroda</span><strong>${d.rewardGold[0]}–${d.rewardGold[1]} złota · ${d.rewardXp} XP</strong></div><button class="primary-btn dungeon-enter-btn" data-dungeon="${d.id}" ${lock||state.dungeonRun?'disabled':''}>${lock?'🔒 Wymagany poziom '+d.level:(state.dungeonRun?'Loch jest już aktywny':'Wejdź do lochu')}</button></article>`
+    return `<article class="dungeon-card dungeon-card-v2 theme-${theme} ${lock?'locked':''} ${active?'active-dungeon':''}" data-dungeon-card="${d.id}" role="button" tabindex="${lock?'-1':'0'}" aria-disabled="${lock}"><div class="dungeon-card-top"><div><span class="dungeon-level">Poziom ${d.level}</span><h3>${d.name}</h3><p>${d.rooms.length} komnaty · koszt ${d.energy} wytrzymałości</p></div><div class="dungeon-completions">Ukończenia<strong>${completed}</strong></div></div><div class="dungeon-room-preview">${rooms}</div><div class="dungeon-reward"><span>Nagroda</span><strong>${d.rewardGold[0]}–${d.rewardGold[1]} złota · ${d.rewardXp} XP</strong></div><button type="button" class="primary-btn dungeon-enter-btn" data-dungeon="${d.id}" ${lock?'disabled':''}>${lock?'🔒 Wymagany poziom '+d.level:(active?'Przejdź do aktywnego lochu':(state.dungeonRun?'Rozpocznij ten loch':'Wejdź do lochu'))}</button></article>`
   }).join('');
-  document.querySelectorAll('[data-dungeon]').forEach(b=>b.onclick=()=>startDungeon(b.dataset.dungeon));
   renderDungeonRun();
 }
 function startDungeon(id){
-  const d=GAME_DATA.dungeons.find(x=>x.id===id);if(!d||state.dungeonRun)return;
+  const d=GAME_DATA.dungeons.find(x=>x.id===id);if(!d)return;
+  const locked=state.level<d.level&&state.profileType!=="gm";
+  if(locked){if($('dungeonReport'))$('dungeonReport').innerHTML=`<p>Ten loch wymaga poziomu ${d.level}.</p>`;return;}
+  if(state.dungeonRun){
+    if(state.dungeonRun.id===id){setTimeout(()=>document.getElementById('dungeonRunPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),30);return;}
+    if($('dungeonReport'))$('dungeonReport').innerHTML='<p>Najpierw opuść obecnie aktywny loch.</p>';
+    setTimeout(()=>document.getElementById('dungeonRunPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),30);return;
+  }
   if(state.energy<d.energy&&state.profileType!=="gm"){$('dungeonReport').innerHTML='<p>Brakuje wytrzymałości.</p>';return;}
   if(state.profileType!=="gm")state.energy-=d.energy;
   state.dungeonRun={id,room:0,hp:combatPower().hp};

@@ -163,7 +163,7 @@ const GAME_DATA = {
     {id:"imperial",name:"Maximus Imperialis",league:"Mistrz",hp:520,attack:50,defense:22,rewardPoints:65,rewardGold:[260,360],image:"assets/monster-icons/stoneGuardian.webp"}
   ],
   dungeons:[
-    {id:"cryptOfAsh",name:"Krypta Popiołu",level:5,energy:2,rewardGold:[280,380],rewardXp:340,rooms:[{name:"Przedsionek kości",enemy:"skeleton"},{name:"Sala pajęczyn",enemy:"cryptSpider"},{name:"Zapieczętowany grobowiec",enemy:"graveWarden"},{name:"Tron Licha",enemy:"lich"}]},
+    {id:"cryptOfAsh",name:"Krypta Popiołu",level:1,energy:2,rewardGold:[280,380],rewardXp:340,rooms:[{name:"Przedsionek kości",enemy:"skeleton"},{name:"Sala pajęczyn",enemy:"cryptSpider"},{name:"Zapieczętowany grobowiec",enemy:"graveWarden"},{name:"Tron Licha",enemy:"lich"}]},
     {id:"jackalVault",name:"Skarbiec Czerwonych Szakali",level:9,energy:3,rewardGold:[520,720],rewardXp:620,rooms:[{name:"Posterunek zwiadowców",enemy:"campScout"},{name:"Sala łupów",enemy:"campBrute"},{name:"Galeria łuczników",enemy:"campArcher"},{name:"Komnata herszta",enemy:"banditChief"}]},
     {id:"blackMarshTemple",name:"Świątynia Czarnych Bagien",level:12,energy:3,rewardGold:[850,1150],rewardXp:980,rooms:[{name:"Zalana krypta",enemy:"swampCrawler"},{name:"Ołtarz wiedźmy",enemy:"bogWitch"},{name:"Most trolla",enemy:"marshTroll"},{name:"Gniazdo Hydry",enemy:"swampHydra"}]},
     {id:"frozenAbyss",name:"Zamarznięta Otchłań",level:15,energy:4,rewardGold:[1300,1800],rewardXp:1450,rooms:[{name:"Lodowy przesmyk",enemy:"iceWolf"},{name:"Obóz najeźdźców",enemy:"frostRaider"},{name:"Komnata golema",enemy:"iceGolem"},{name:"Serce otchłani",enemy:"frostWyrm"}]}
