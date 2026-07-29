@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.5.0</title>
+  <title>Project Colosseum v0.6.0</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,7 +14,11 @@
         <p class="eyebrow">PROJECT COLOSSEUM</p>
         <h1>Vallis — Dom Żelaza</h1>
       </div>
-      <button id="resetGameBtn" class="ghost-btn" type="button">Nowa gra</button>
+      <div class="topbar-actions">
+        <span id="profileBadge" class="profile-badge">GRACZ</span>
+        <button id="gmLoginBtn" class="ghost-btn" type="button">Profil GM</button>
+        <button id="resetGameBtn" class="ghost-btn" type="button">Nowa gra</button>
+      </div>
     </header>
 
     <section class="status-grid panel">
@@ -42,6 +46,7 @@
       <button class="nav-btn" data-view="character">Postać</button>
       <button class="nav-btn" data-view="blacksmith">Kowal</button>
       <button class="nav-btn" data-view="chronicle">Kronika</button>
+      <button id="gmNavBtn" class="nav-btn gm-only hidden" data-view="gm">GM</button>
     </nav>
 
     <main>
@@ -212,6 +217,34 @@
           <div id="chronicleList" class="chronicle-list"></div>
         </div>
       </section>
+
+      <section id="view-gm" class="view">
+        <div class="panel gm-panel">
+          <p class="eyebrow">NARZĘDZIA DEWELOPERSKIE</p>
+          <h2>Panel Game Master</h2>
+          <p>Ten profil służy wyłącznie do testowania gry. Zmiany zapisują się automatycznie.</p>
+
+          <div class="gm-status-grid">
+            <div><span>Profil</span><strong id="gmProfileStatus">Game Master</strong></div>
+            <div><span>Poziom</span><strong id="gmLevelStatus">99</strong></div>
+            <div><span>Przedmioty</span><strong id="gmItemStatus">0</strong></div>
+          </div>
+
+          <div class="gm-actions">
+            <button id="gmGrantAllBtn" class="primary-btn" type="button">Dodaj wszystkie przedmioty</button>
+            <button id="gmMaxCharacterBtn" class="primary-btn alt" type="button">Maksymalna postać</button>
+            <button id="gmUnlockWorldBtn" class="primary-btn" type="button">Odblokuj cały świat</button>
+            <button id="gmGoldBtn" class="primary-btn alt" type="button">Dodaj 999 999 złota</button>
+            <button id="gmHealBtn" class="primary-btn" type="button">Pełne życie i wytrzymałość</button>
+            <button id="gmCompleteQuestsBtn" class="primary-btn alt" type="button">Ukończ wszystkie zadania</button>
+            <button id="gmClearInventoryBtn" class="danger-btn" type="button">Wyczyść plecak</button>
+            <button id="gmExitBtn" class="danger-btn" type="button">Wyjdź z profilu GM</button>
+          </div>
+
+          <p id="gmMessage" class="notice gm-message">Profil GM jest aktywny.</p>
+        </div>
+      </section>
+
     </main>
 
     <div id="dialogueModal" class="modal hidden">
@@ -223,7 +256,7 @@
       </div>
     </div>
 
-    <footer>Project Colosseum v0.5.0 — prototyp testowy</footer>
+    <footer>Project Colosseum v0.6.0 — prototyp testowy</footer>
   </div>
 
   <script src="js/data.js"></script>
