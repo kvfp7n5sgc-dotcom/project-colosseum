@@ -1,15 +1,17 @@
-PROJECT COLOSSEUM v0.14.1 — NAPRAWA WYPRAW
+PROJECT COLOSSEUM v0.14.2 — LOCHY 2.0
 
-Podmień:
+PODMIEŃ:
 - index.html
-- folder js/
+- css/
+- js/
 
-Folderów assets/ i css/ nie trzeba podmieniać.
+NIE PODMIENIAJ:
+- assets/
 
-Naprawiono:
-- otwieranie zakładki Wyprawy na iPhone/Safari,
-- powrót strony z pamięci podręcznej,
-- wymuszone renderowanie mapy 7 lokacji i przeciwników,
-- cache-busting skryptów GitHub Pages.
-
-Po wysłaniu na GitHub odśwież stronę lub zamknij kartę Safari i otwórz ją ponownie.
+ZMIANY:
+- 4 kolorystycznie odrębne lochy
+- podgląd 4 unikalnych przeciwników w każdym lochu
+- osobny portret bossa
+- czytelny przebieg komnat i HP bohatera
+- działające wejście, walka, opuszczanie i nagrody
+- zachowany system Wypraw v0.14.1

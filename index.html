@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.14.1 — Wyprawy FIX</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Project Colosseum v0.14.2 — Lochy 2.0</title>
+  <link rel="stylesheet" href="css/style.css?v=0.14.2">
 </head>
 <body>
   <div class="app-shell">
@@ -313,7 +313,20 @@
 
 
       <section id="view-arena" class="view"><div class="panel arena-hero"><p class="eyebrow">ARENA VALLIS</p><h2>Liga gladiatorów</h2><p>Walcz z przeciwnikami AI i awansuj w ligach.</p><div class="arena-summary"><div><span>Liga</span><strong id="arenaLeague">Brąz</strong></div><div><span>Punkty</span><strong id="arenaPoints">0</strong></div><div><span>Seria</span><strong id="arenaStreak">0</strong></div><div><span>Rekord</span><strong id="arenaBestStreak">0</strong></div></div></div><div id="arenaOpponentList" class="arena-grid"></div><div class="panel"><h3>Raport areny</h3><div id="arenaReport" class="battle-report"><p>Wybierz przeciwnika.</p></div></div></section>
-      <section id="view-dungeons" class="view"><div class="panel dungeon-hero"><p class="eyebrow">LOCHY</p><h2>Wyprawy wieloetapowe</h2><p>Oczyść kolejne komnaty i pokonaj bossa.</p></div><div id="dungeonList" class="dungeon-grid"></div><div class="panel"><h3 id="dungeonRunTitle">Brak aktywnego lochu</h3><p id="dungeonRunDescription">Wybierz loch.</p><div id="dungeonProgress" class="dungeon-progress"></div><button id="dungeonFightBtn" class="primary-btn" disabled>Walcz dalej</button><button id="dungeonLeaveBtn" class="primary-btn alt" disabled>Opuść loch</button><div id="dungeonReport" class="battle-report"><p>Brak aktywnej wyprawy.</p></div></div></section>
+      <section id="view-dungeons" class="view">
+        <div class="panel dungeon-hero dungeon-hero-v2">
+          <div><p class="eyebrow">PODZIEMIA IMPERIUM</p><h2>Lochy Vallis</h2><p>Wybierz wejście, oczyść cztery komnaty i pokonaj unikalnego bossa. Każdy loch ma własnych przeciwników, kolory i nagrody.</p></div>
+          <div class="dungeon-hero-seal" aria-hidden="true">⌘</div>
+        </div>
+        <div id="dungeonList" class="dungeon-grid dungeon-grid-v2"></div>
+        <section id="dungeonRunPanel" class="panel dungeon-run-panel">
+          <div class="dungeon-run-head"><div><p class="eyebrow">AKTYWNY LOCH</p><h3 id="dungeonRunTitle">Brak aktywnego lochu</h3><p id="dungeonRunDescription">Wybierz jeden z dostępnych lochów.</p></div><div id="dungeonRunHp" class="dungeon-run-hp">HP —</div></div>
+          <div id="dungeonProgress" class="dungeon-progress dungeon-progress-v2"></div>
+          <div id="dungeonCurrentEnemy" class="dungeon-current-enemy hidden"></div>
+          <div class="dungeon-actions"><button id="dungeonFightBtn" class="primary-btn" disabled>Walcz w komnacie</button><button id="dungeonLeaveBtn" class="primary-btn alt" disabled>Opuść loch</button></div>
+          <div id="dungeonReport" class="battle-report dungeon-report"><p>Brak aktywnej wyprawy.</p></div>
+        </section>
+      </section>
       <section id="view-skills" class="view"><div class="panel skills-hero"><p class="eyebrow">ROZWÓJ POSTACI</p><h2>Drzewko umiejętności</h2><p>Otrzymujesz 1 punkt co 2 poziomy.</p><div class="skill-points-box">Dostępne punkty: <strong id="skillPointsValue">0</strong></div></div><div id="skillTree" class="skill-tree"></div></section>
       <section id="view-chronicle" class="view">
         <div class="panel">
@@ -389,15 +402,15 @@
       </div>
     </div>
 
-    <footer>Project Colosseum v0.14.1 — naprawa Wypraw</footer>
+    <footer>Project Colosseum v0.14.2 — Lochy 2.0</footer>
   </div>
 
-  <script src="js/data.js?v=0.14.1"></script>
-  <script src="js/save.js?v=0.14.1"></script>
-  <script src="js/player.js?v=0.14.1"></script>
-  <script src="js/combat.js?v=0.14.1"></script>
-  <script src="js/expeditions.js?v=0.14.1"></script>
-  <script src="js/game.js?v=0.14.1"></script>
-  <script src="js/nav-fix.js?v=0.14.1"></script>
+  <script src="js/data.js?v=0.14.2"></script>
+  <script src="js/save.js?v=0.14.2"></script>
+  <script src="js/player.js?v=0.14.2"></script>
+  <script src="js/combat.js?v=0.14.2"></script>
+  <script src="js/expeditions.js?v=0.14.2"></script>
+  <script src="js/game.js?v=0.14.2"></script>
+  <script src="js/nav-fix.js?v=0.14.2"></script>
 </body>
 </html>
