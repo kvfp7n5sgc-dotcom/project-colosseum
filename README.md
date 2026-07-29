@@ -1,3 +1,2 @@
-# Project Colosseum v0.12.1
-
-Mobilna wersja z dużym Vallis i działającym dolnym paskiem nawigacji.
+# Project Colosseum v0.14.0 — część 1
+Pierwsza partycja dużej aktualizacji: całkowicie przebudowane Wyprawy.

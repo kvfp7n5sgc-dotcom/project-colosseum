@@ -1,15 +1,16 @@
-PROJECT COLOSSEUM v0.12.1 — DUŻE MIASTO I DOLNE MENU
+PROJECT COLOSSEUM v0.14.0 — CZĘŚĆ 1: WYPRAWY
 
-Skopiuj i podmień:
+Podmień:
 - index.html
 - css/
 - js/
 
-Folder assets/ nie zmienił się.
+Nie usuwaj folderu assets/ z poprzedniej wersji.
 
-Zmiany:
-- Vallis jest dużo większe i można przesuwać mapę poziomo na telefonie.
-- usunięto górny rząd przycisków nawigacji.
-- nowe dolne menu działa: Miasto, Mapa, Wyprawy, Gladiatorzy, Zadania, Sklep, Więcej.
-- Więcej otwiera pozostałe systemy gry.
-- na telefonie ukryto część paneli pod miastem, aby mapa zajmowała większą część ekranu.
+Dodano:
+- jeden kontynent z 7 kolorowymi lokacjami,
+- 4 unikalnych przeciwników i 1 boss w każdej lokacji,
+- 35 indywidualnych portretów-symboli bez powtarzanego Minotaura,
+- odblokowanie bossa po 10 zwycięstwach i pokonaniu każdego zwykłego wroga,
+- działające walki, nagrody, XP, złoto i zapis postępu,
+- pełną obsługę telefonu.
