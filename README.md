@@ -1,25 +1,13 @@
-# Project Colosseum v0.4.0 — Graphics Pack
+# Project Colosseum v0.5.0
 
-Pełna aktualizacja prototypu.
+Aktualizacja dodaje interaktywną panoramę miasta Vallis.
 
-## Dodane
-- mapa świata i wybór regionów
-- odblokowywanie regionów poziomem
-- zadania Marcusa Varro
-- boss Fenrir
-- sklep Lydii
-- mikstury leczenia, energii i obrażeń
-- limit plecaka 30 miejsc
-- filtrowanie i sortowanie plecaka
-- sprzedaż wszystkich trofeów
-- ulepszanie wyposażenia u kowala
-- dialogi NPC
-- aktywne efekty czasowe
-- zachowanie i migracja zapisu z poprzedniej wersji
+## Nowości
+- klikalne budynki: Arena, Kuźnia, Rynek, Koszary, Dom Żelaza, Brama i Kronikarka,
+- animowany dym, flagi i podświetlenia,
+- responsywny układ na iPhone,
+- opcjonalny ambient generowany w przeglądarce,
+- zachowane wszystkie funkcje i zapis gry z v0.4.
 
-## Instalacja
-Zastąp pliki w repozytorium zawartością tej paczki, zachowując strukturę folderów.
-
-
-## Pakiet graficzny
-Dodano osobne tła, portrety NPC, potwory, ikony przedmiotów, mikstury i elementy UI. Wszystko jest już podłączone do gry.
+## Instalacja na GitHubie
+Podmień całą zawartość repozytorium plikami z tej paczki. Nie zmieniaj nazw folderów.
