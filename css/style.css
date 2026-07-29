@@ -88,3 +88,23 @@ select{background:#211911;color:var(--text);border:1px solid var(--border);borde
 @keyframes skyGlow{0%,100%{opacity:.45;transform:scale(.9)}50%{opacity:.8;transform:scale(1.08)}}
 @media(max-width:760px){.city-scene{min-height:680px;background-position:center}.city-title-card{top:12px;left:12px;width:calc(100% - 24px)}.city-hotspot{min-width:94px;padding:8px 7px}.city-hotspot strong{font-size:.86rem}.city-hotspot small{display:none}.hotspot-arena{left:50%;top:34%}.hotspot-forge{left:76%;top:51%}.hotspot-market{left:24%;top:55%}.hotspot-barracks{left:73%;top:27%}.hotspot-house{left:47%;top:70%}.hotspot-gate{left:17%;top:35%}.hotspot-chronicle{left:78%;top:76%}.sound-toggle{left:12px;right:auto;bottom:12px}}
 @media(prefers-reduced-motion:reduce){.city-hotspot,.city-smoke,.city-banner,.city-sky-glow{animation:none!important}}
+
+
+/* ===== v0.6.0 — PROFIL GAME MASTER ===== */
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.profile-badge{display:inline-flex;align-items:center;min-height:34px;padding:0 11px;border:1px solid rgba(255,255,255,.14);border-radius:999px;font-size:.72rem;font-weight:900;letter-spacing:.08em;color:#b9b0a2;background:rgba(0,0,0,.25)}
+.profile-badge.active{color:#ffd878;border-color:#d6a53c;background:linear-gradient(180deg,rgba(94,57,8,.9),rgba(42,24,4,.95));box-shadow:0 0 18px rgba(255,182,47,.2)}
+.gm-panel{border-color:#a87824;box-shadow:0 0 30px rgba(213,157,44,.12)}
+.gm-status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.gm-status-grid>div{padding:14px;border:1px solid rgba(222,174,75,.25);border-radius:12px;background:rgba(0,0,0,.22)}
+.gm-status-grid span{display:block;color:#aa9f90;font-size:.78rem;margin-bottom:5px}
+.gm-status-grid strong{font-size:1.1rem;color:#f3cf79}
+.gm-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.danger-btn{appearance:none;border:1px solid #9b3b36;border-radius:10px;padding:12px 14px;background:linear-gradient(#6f2926,#441714);color:#fff;font-weight:800;cursor:pointer}
+.gm-message{margin-top:16px}
+.hidden{display:none!important}
+@media(max-width:700px){
+  .topbar-actions{width:100%;justify-content:flex-start}
+  .gm-status-grid,.gm-actions{grid-template-columns:1fr}
+  .profile-badge{order:-1}
+}
