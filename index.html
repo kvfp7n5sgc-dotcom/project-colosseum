@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15100b">
-  <title>Project Colosseum v0.8.0</title>
+  <title>Project Colosseum v0.9.0</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,6 +15,7 @@
         <h1>Vallis — Dom Żelaza</h1>
       </div>
       <div class="topbar-actions">
+        <span id="worldPhaseBadge" class="profile-badge world-phase">DZIEŃ</span>
         <span id="profileBadge" class="profile-badge">GRACZ</span>
         <button id="gmLoginBtn" class="ghost-btn" type="button">Profil GM</button>
         <button id="resetGameBtn" class="ghost-btn" type="button">Nowa gra</button>
@@ -47,6 +48,7 @@
       <button class="nav-btn" data-view="blacksmith">Kowal</button>
       <button class="nav-btn" data-view="auction">Aukcje</button>
       <button class="nav-btn" data-view="bestiary">Bestiariusz</button>
+      <button class="nav-btn" data-view="imperium">Imperium</button>
       <button class="nav-btn" data-view="chronicle">Kronika</button>
       <button id="gmNavBtn" class="nav-btn gm-only hidden" data-view="gm">GM</button>
     </nav>
@@ -281,6 +283,85 @@
         <div id="bestiaryList" class="bestiary-grid"></div>
       </section>
 
+
+      <section id="view-imperium" class="view">
+        <div class="panel imperium-hero">
+          <p class="eyebrow">ROZWÓJ IMPERIUM</p>
+          <h2>Twoje wpływy</h2>
+          <p>Rozwijaj profesję, posiadłość, flotę, reputację i kontrolę nad fortami. Wszystkie systemy zapisują się automatycznie.</p>
+          <div class="imperium-summary">
+            <div><span>Pora świata</span><strong id="phaseLabel">Dzień</strong></div>
+            <div><span>Aktywna profesja</span><strong id="professionSummary">Brak</strong></div>
+            <div><span>Wierzchowiec</span><strong id="mountSummary">Brak</strong></div>
+            <div><span>Forty</span><strong id="fortSummary">0/3</strong></div>
+          </div>
+        </div>
+
+        <div class="imperium-grid">
+          <article class="panel system-card">
+            <p class="eyebrow">CYKL ŚWIATA</p>
+            <h3>Dzień i noc</h3>
+            <p id="dayNightDescription"></p>
+            <button id="togglePhaseBtn" class="primary-btn alt" type="button">Zmień porę testowo</button>
+          </article>
+
+          <article class="panel system-card">
+            <p class="eyebrow">PROFESJA</p>
+            <h3>Droga zarobku</h3>
+            <div id="professionList" class="system-list"></div>
+            <button id="professionWorkBtn" class="primary-btn" type="button">Wykonaj pracę</button>
+            <p id="professionStatus" class="small"></p>
+          </article>
+
+          <article class="panel system-card wide-card">
+            <p class="eyebrow">FORTY</p>
+            <h3>Posterunki Imperium</h3>
+            <div id="fortList" class="fort-grid"></div>
+            <button id="claimFortIncomeBtn" class="primary-btn" type="button">Odbierz dochód z fortów</button>
+            <p id="fortStatus" class="small"></p>
+          </article>
+
+          <article class="panel system-card">
+            <p class="eyebrow">WIERZCHOWCE</p>
+            <h3>Stajnia</h3>
+            <div id="mountList" class="system-list"></div>
+            <p id="mountStatus" class="small"></p>
+          </article>
+
+          <article class="panel system-card">
+            <p class="eyebrow">REPUTACJA</p>
+            <h3>Frakcje</h3>
+            <div id="reputationList" class="reputation-list"></div>
+          </article>
+
+          <article class="panel system-card wide-card">
+            <p class="eyebrow">EKSPEDYCJE MORSKIE</p>
+            <h3>Port Aurelia</h3>
+            <div id="voyageList" class="voyage-grid"></div>
+            <p id="voyageStatus" class="small"></p>
+          </article>
+
+          <article class="panel system-card wide-card">
+            <p class="eyebrow">POSIADŁOŚĆ</p>
+            <h3>Dom Żelaza</h3>
+            <div id="estateList" class="estate-grid"></div>
+            <button id="claimEstateIncomeBtn" class="primary-btn" type="button">Odbierz dochód z posiadłości</button>
+            <p id="estateStatus" class="small"></p>
+          </article>
+
+          <article class="panel system-card wide-card">
+            <p class="eyebrow">LOSOWE WYDARZENIA</p>
+            <h3>Droga nie wybacza</h3>
+            <div id="eventCard" class="event-card">
+              <strong>Brak aktywnego wydarzenia</strong>
+              <p>Wyrusz na zwiad, aby odkryć kupca, zasadzkę, skarb albo ukrytą świątynię.</p>
+            </div>
+            <button id="randomEventBtn" class="primary-btn" type="button">Wyrusz na zwiad — 1 wytrzymałość</button>
+            <p id="eventStatus" class="small"></p>
+          </article>
+        </div>
+      </section>
+
       <section id="view-chronicle" class="view">
         <div class="panel">
           <p class="eyebrow">PAMIĘĆ ŚWIATA</p>
@@ -327,7 +408,7 @@
       </div>
     </div>
 
-    <footer>Project Colosseum v0.8.0 — prototyp testowy</footer>
+    <footer>Project Colosseum v0.9.0 — prototyp testowy</footer>
   </div>
 
   <script src="js/data.js"></script>

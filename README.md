@@ -1,20 +1,25 @@
-# Project Colosseum v0.8.0
+# Project Colosseum v0.9.0 — Systemy Imperium
 
-## Nowości
-- przebudowany, statyczny plan miasta Vallis z 8 klikalnymi budynkami,
-- nowy Dom Aukcyjny z filtrowaniem, sortowaniem i losowymi ofertami,
-- zakup przedmiotów z aukcji do plecaka,
-- rozbudowana kuźnia,
-- wybór konkretnego założonego przedmiotu,
-- ulepszanie od +0 do +20,
-- koszt i szansa powodzenia zależne od poziomu ulepszenia,
-- nieudane ulepszenie nie niszczy przedmiotu, tylko obniża trwałość,
-- naprawa ekwipunku z kosztem zależnym od uszkodzeń,
-- zachowana Stara Kopalnia, wszystkie wyprawy, Bestiariusz i profil GM,
-- usunięty przycisk dźwięku miasta i wyłączone animacje miasta.
+Duża aktualizacja oparta na stabilnej wersji v0.8.0.
+
+## Nowe działające systemy
+- cykl dnia i nocy,
+- 4 profesje z poziomami i pracą,
+- 3 forty do przejęcia oraz dochód z posterunków,
+- 4 wierzchowce z bonusami,
+- reputacja u 3 frakcji,
+- ekspedycje morskie z licznikami czasu,
+- posiadłość z 3 budynkami i ulepszeniami,
+- losowe wydarzenia na trakcie,
+- nowa zakładka „Imperium”,
+- pełny zapis i migracja starszych zapisów.
+
+## Balans testowy
+Czasy oczekiwania zostały skrócone do 30–420 sekund, aby wygodnie testować grę.
+Profil GM pomija część ograniczeń czasowych i poziomowych.
 
 ## Profil Game Master
 Kod: `COLOSSEUM-GM`
 
-## Ważne
-Wgraj całą zawartość ZIP-a, aby pliki HTML, CSS i JavaScript miały zgodną wersję.
+## Instalacja
+Wgraj całą zawartość ZIP-a do repozytorium, zachowując foldery `css`, `js` i `assets`.
