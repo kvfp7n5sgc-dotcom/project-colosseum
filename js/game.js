@@ -2,7 +2,7 @@ let state=loadGame();const $=id=>document.getElementById(id);
 function rarityClass(r){return`rarity-${r||"common"}`;}
 function showView(name){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));$(`view-${name}`).classList.add("active");document.querySelector(`.nav-btn[data-view="${name}"]`)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
 function renderHeader(){ $("levelValue").textContent=state.level;$("goldValue").textContent=state.gold;$("energyValue").textContent=state.energy;$("maxEnergyValue").textContent=state.maxEnergy;$("hpValue").textContent=state.hp;$("maxHpValue").textContent=state.maxHp;$("xpLabel").textContent=`${state.xp} / ${state.xpNext}`;$("xpBar").style.width=`${Math.min(100,state.xp/state.xpNext*100)}%`;$("regenLabel").textContent=state.energy>=state.maxEnergy?"pełna":"1 punkt za sekundę";}
-function isRegionUnlocked(region){return state.level>=region.unlockLevel;}
+function isRegionUnlocked(region){return state.profileType==="gm"||state.worldUnlocked||state.level>=region.unlockLevel;}
 function renderWorld(){
   $("worldMap").innerHTML=GAME_DATA.regions.map(r=>`<article class="world-node ${state.selectedRegion===r.id?"active":""} ${isRegionUnlocked(r)?"":"locked"}"><p class="eyebrow">${isRegionUnlocked(r)?"ODKRYTO":"ZABLOKOWANE"}</p><h3>${r.name}</h3><p>${r.description}</p><span class="small">Wymagany poziom: ${r.unlockLevel}</span>${isRegionUnlocked(r)?`<br><button class="item-btn primary" data-region="${r.id}">Wybierz region</button>`:""}</article>`).join("");
   document.querySelectorAll("[data-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.region;persistAndRender();showView("expeditions");});
@@ -43,7 +43,7 @@ function filteredInventory(){
   if(sort==="newest")arr.reverse();return arr;
 }
 function renderInventory(){
-  $("inventoryCount").textContent=`${state.inventory.length}/${GAME_DATA.inventoryLimit}`;
+  const inventoryLimit=state.profileType==="gm"?GAME_DATA.gmInventoryLimit:GAME_DATA.inventoryLimit;$("inventoryCount").textContent=`${state.inventory.length}/${inventoryLimit}`;
   const arr=filteredInventory();if(!arr.length){$("inventoryList").innerHTML=`<p class="small">Brak przedmiotów w tej kategorii.</p>`;return;}
   $("inventoryList").innerHTML=arr.map(({item,index})=>{const eq=item.slot?state.equipment[item.slot]:null,diff=item.slot?item.power-(eq?.power||0):null;
     return`<article class="inventory-card"><img class="item-image" src="${itemImage(item)}" alt="${item.name}"><strong class="${rarityClass(item.rarity)}">${item.rarityName||"Zwykły"} ${item.name}</strong><p class="small">${item.type} · Moc ${item.power||0} · Trwałość ${item.durability??100}%</p>${item.slot?`<p class="comparison ${diff>0?"good":diff<0?"bad":""}">${eq?`Założone: ${eq.power} · `:"Puste miejsce · "}Zmiana: ${diff>0?"+":""}${diff}</p>`:""}<div class="item-actions">${item.slot?`<button class="item-btn primary" data-equip="${index}">Załóż</button>`:""}${item.kind==="consumable"?`<button class="item-btn primary" data-use="${index}">Użyj</button>`:""}<button class="item-btn" data-sell="${index}">Sprzedaj za ${itemSellPrice(item)} złota</button></div></article>`;}).join("");
@@ -63,7 +63,7 @@ function renderQuests(){
   $("questList").innerHTML=GAME_DATA.quests.map(q=>{const status=state.quests[q.id]||"available",prog=Math.min(q.required,questProgress(q)),pct=Math.round(prog/q.required*100);return`<article class="quest-card"><h3>${q.name}</h3><p class="small">${q.description}</p><div class="quest-progress"><div style="width:${pct}%"></div></div><p class="small">${prog}/${q.required}</p><p class="small">Nagroda: ${q.reward.xp} XP, ${q.reward.gold} złota${q.reward.item?`, ${q.reward.item.name}`:""}</p>${status==="claimed"?`<span class="danger">Odebrano</span>`:`<button class="item-btn primary" data-claim="${q.id}" ${prog<q.required?"disabled":""}>Odbierz nagrodę</button>`}</article>`;}).join("");
   document.querySelectorAll("[data-claim]").forEach(b=>b.onclick=()=>claimQuest(b.dataset.claim));
 }
-function claimQuest(id){const q=GAME_DATA.quests.find(x=>x.id===id);if(!q||state.quests[id]==="claimed"||questProgress(q)<q.required)return;state.xp+=q.reward.xp;state.gold+=q.reward.gold;if(q.reward.item&&state.inventory.length<GAME_DATA.inventoryLimit)state.inventory.push(createLootItem(q.reward.item));state.quests[id]="claimed";state.chronicle.unshift(`Ukończyłeś zadanie „${q.name}”.`);applyLevelUps(state);persistAndRender();}
+function claimQuest(id){const q=GAME_DATA.quests.find(x=>x.id===id);if(!q||state.quests[id]==="claimed"||questProgress(q)<q.required)return;state.xp+=q.reward.xp;state.gold+=q.reward.gold;const limit=state.profileType==="gm"?GAME_DATA.gmInventoryLimit:GAME_DATA.inventoryLimit;if(q.reward.item&&state.inventory.length<limit)state.inventory.push(createLootItem(q.reward.item));state.quests[id]="claimed";state.chronicle.unshift(`Ukończyłeś zadanie „${q.name}”.`);applyLevelUps(state);persistAndRender();}
 function renderBuffs(){const active=state.buffs.damageUntil>Date.now();$("activeBuffs").innerHTML=active?`<span class="buff">Furia: +${state.buffs.damagePercent}% obrażeń</span>`:`<span class="small">Brak aktywnych efektów.</span>`;}
 function renderChronicle(){$("chronicleList").innerHTML=state.chronicle.map((e,i)=>`<div class="chronicle-entry"><span class="small">Wpis ${state.chronicle.length-i}</span><div>${e}</div></div>`).join("");}
 function repairAll(){const d=Object.values(state.equipment).some(i=>i&&i.durability<100);if(!d){$("repairStatus").textContent="Cały ekwipunek jest już naprawiony.";return;}if(state.gold<20){$("repairStatus").textContent="Masz za mało złota.";return;}state.gold-=20;Object.values(state.equipment).forEach(i=>{if(i)i.durability=100;});state.chronicle.unshift("Brenn naprawił cały twój ekwipunek.");$("repairStatus").textContent="Ekwipunek naprawiony.";persistAndRender();}
@@ -89,11 +89,116 @@ function toggleCitySound(){
   cityAudio={ctx,osc1,osc2};button.setAttribute("aria-pressed","true");button.textContent="🔊 Dźwięk miasta";
 }
 
+
+function gmItemFromTemplate(template){
+  const rarity=template.rarity||"common";
+  const rarityData=GAME_DATA.rarities[rarity]||GAME_DATA.rarities.common;
+  return {
+    id:makeId(),name:template.name,slot:template.slot??null,type:template.type||(template.slot?GAME_DATA.equipmentLabels[template.slot]:"Przedmiot"),
+    power:Number(template.power)||1,durability:100,rarity,rarityName:rarityData.name,color:rarityData.color,
+    kind:template.kind||(template.effect?"consumable":(template.slot?"equipment":"trophy")),
+    effect:template.effect||null,amount:template.amount||0,durationMs:template.durationMs||0
+  };
+}
+function setGmMessage(message){const el=$("gmMessage");if(el)el.textContent=message;}
+function renderGm(){
+  const active=state.profileType==="gm";
+  $("gmNavBtn")?.classList.toggle("hidden",!active);
+  if($("profileBadge")){
+    $("profileBadge").textContent=active?"GAME MASTER":"GRACZ";
+    $("profileBadge").classList.toggle("active",active);
+  }
+  if($("gmLoginBtn"))$("gmLoginBtn").textContent=active?"Panel GM":"Profil GM";
+  if($("gmLevelStatus"))$("gmLevelStatus").textContent=state.level;
+  if($("gmItemStatus"))$("gmItemStatus").textContent=state.inventory.length;
+}
+function activateGm(){
+  if(state.profileType==="gm"){showView("gm");return;}
+  const code=prompt("Wpisz kod profilu Game Master:");
+  if(code===null)return;
+  if(code.trim()!=="COLOSSEUM-GM"){
+    alert("Nieprawidłowy kod.");
+    return;
+  }
+  state.profileType="gm";
+  state.worldUnlocked=true;
+  state.chronicle.unshift("Aktywowano profil Game Master.");
+  persistAndRender();
+  showView("gm");
+  setGmMessage("Profil GM aktywny. Kod testowy: COLOSSEUM-GM");
+}
+function gmGrantAllItems(){
+  const existing=new Set(state.inventory.map(item=>`${item.name}|${item.rarity}`));
+  let added=0;
+  GAME_DATA.gmCatalog.forEach(template=>{
+    const key=`${template.name}|${template.rarity||"common"}`;
+    if(!existing.has(key)&&state.inventory.length<GAME_DATA.gmInventoryLimit){
+      state.inventory.push(gmItemFromTemplate(template));existing.add(key);added++;
+    }
+  });
+  state.chronicle.unshift(`Game Master dodał ${added} przedmiotów testowych.`);
+  persistAndRender();setGmMessage(`Dodano ${added} brakujących przedmiotów. Plecak: ${state.inventory.length}/${GAME_DATA.gmInventoryLimit}.`);
+}
+function gmMaxCharacter(){
+  state.level=99;state.xp=0;state.xpNext=999999;state.statPoints=99;
+  state.stats={strength:100,endurance:100,dexterity:100,cunning:100,luck:100};
+  state.maxHp=9999;state.hp=9999;state.maxEnergy=999;state.energy=999;
+  state.worldUnlocked=true;
+  state.chronicle.unshift("Game Master ustawił maksymalne statystyki postaci.");
+  persistAndRender();setGmMessage("Postać ma teraz poziom 99 i maksymalne statystyki testowe.");
+}
+function gmUnlockWorld(){
+  state.worldUnlocked=true;state.level=Math.max(state.level,99);
+  state.chronicle.unshift("Game Master odblokował wszystkie regiony.");
+  persistAndRender();setGmMessage("Wszystkie obecne i przyszłe regiony korzystające z blokady poziomu są odblokowane.");
+}
+function gmAddGold(){
+  state.gold=999999;state.chronicle.unshift("Game Master ustawił 999 999 złota.");
+  persistAndRender();setGmMessage("Stan złota ustawiono na 999 999.");
+}
+function gmHeal(){
+  state.hp=state.maxHp;state.energy=state.maxEnergy;state.lastEnergyTick=Date.now();
+  persistAndRender();setGmMessage("Życie i wytrzymałość zostały uzupełnione.");
+}
+function gmCompleteQuests(){
+  GAME_DATA.quests.forEach(q=>{
+    if(q.type==="kill")state.kills[q.target]=Math.max(state.kills[q.target]||0,q.required);
+    if(q.type==="gold")state.gold=Math.max(state.gold,q.required);
+    if(q.type==="item"&&!state.inventory.some(i=>i.name===q.target)&&state.inventory.length<GAME_DATA.gmInventoryLimit){
+      state.inventory.push(gmItemFromTemplate({name:q.target,type:"Przedmiot zadania",power:1,rarity:"common"}));
+    }
+  });
+  state.chronicle.unshift("Game Master spełnił wymagania wszystkich zadań.");
+  persistAndRender();setGmMessage("Wymagania wszystkich zadań zostały spełnione. Nagrody możesz odebrać ręcznie.");
+}
+function gmClearInventory(){
+  if(!confirm("Wyczyścić cały plecak profilu GM? Założone przedmioty pozostaną."))return;
+  state.inventory=[];state.chronicle.unshift("Game Master wyczyścił plecak.");
+  persistAndRender();setGmMessage("Plecak został wyczyszczony.");
+}
+function exitGm(){
+  if(!confirm("Wyłączyć profil Game Master i wrócić do trybu gracza? Przedmioty i statystyki pozostaną w tym zapisie."))return;
+  state.profileType="player";state.worldUnlocked=false;
+  state.chronicle.unshift("Wyłączono profil Game Master.");
+  persistAndRender();showView("city");
+}
+
 function persistAndRender(){saveGame(state);renderAll();}
-function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderChronicle();}
+function renderAll(){renderHeader();renderWorld();renderEnemies();renderStats();renderEquipment();renderInventory();renderShop();renderQuests();renderBuffs();renderChronicle();renderGm();}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showView(b.dataset.open));
 document.querySelectorAll("[data-dialogue]").forEach(b=>b.onclick=()=>openDialogue(b.dataset.dialogue));$("closeDialogue").onclick=()=>$("dialogueModal").classList.add("hidden");$("dialogueModal").onclick=e=>{if(e.target===$("dialogueModal"))$("dialogueModal").classList.add("hidden");};
 $("soundToggle").onclick=toggleCitySound;
 $("repairBtn").onclick=repairAll;$("upgradeBtn").onclick=upgradeWeakest;$("sellJunkBtn").onclick=sellAllTrophies;$("inventoryFilter").onchange=renderInventory;$("inventorySort").onchange=renderInventory;
+
+$("gmLoginBtn").onclick=activateGm;
+$("gmGrantAllBtn").onclick=gmGrantAllItems;
+$("gmMaxCharacterBtn").onclick=gmMaxCharacter;
+$("gmUnlockWorldBtn").onclick=gmUnlockWorld;
+$("gmGoldBtn").onclick=gmAddGold;
+$("gmHealBtn").onclick=gmHeal;
+$("gmCompleteQuestsBtn").onclick=gmCompleteQuests;
+$("gmClearInventoryBtn").onclick=gmClearInventory;
+$("gmExitBtn").onclick=exitGm;
+
 $("resetGameBtn").onclick=()=>{if(!confirm("Usunąć zapis i rozpocząć nową grę?"))return;resetSave();state=createNewState();$("battleReport").classList.add("hidden");persistAndRender();showView("city");};
 processEnergyRegeneration();renderAll();setInterval(()=>{processEnergyRegeneration();renderBuffs();},250);

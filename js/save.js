@@ -8,12 +8,12 @@ function createStarterItem(name,slot,type,power,durability=100){
 
 function createNewState(){
   return {
-    saveVersion:"0.4.0",level:1,xp:0,xpNext:100,gold:120,energy:10,maxEnergy:10,lastEnergyTick:Date.now(),
+    saveVersion:"0.6.0",level:1,xp:0,xpNext:100,gold:120,energy:10,maxEnergy:10,lastEnergyTick:Date.now(),
     hp:100,maxHp:100,statPoints:0,selectedRegion:"outskirts",
     stats:{strength:8,endurance:8,dexterity:7,cunning:5,luck:5},
     equipment:{weapon:createStarterItem("Zużyty Gladius","weapon","Broń",5,72),armor:createStarterItem("Skórzany Kaftan","armor","Pancerz",3,81),helmet:null,shield:null},
     inventory:[],kills:{},quests:{},buffs:{damageUntil:0,damagePercent:0},
-    chronicle:["Przybyłeś do Vallis jako niewolnik Domu Żelaza."]
+    profileType:"player",worldUnlocked:false,chronicle:["Przybyłeś do Vallis jako niewolnik Domu Żelaza."]
   };
 }
 
@@ -34,7 +34,7 @@ function migrateState(raw){
   state.chronicle=Array.isArray(raw.chronicle)?raw.chronicle:fresh.chronicle;
   state.kills=raw.kills||{};state.quests=raw.quests||{};state.buffs={...fresh.buffs,...(raw.buffs||{})};
   state.maxEnergy=Number(state.maxEnergy)||10;state.energy=Math.min(state.maxEnergy,Number(state.energy)||0);state.lastEnergyTick=Number(state.lastEnergyTick)||Date.now();
-  state.selectedRegion=state.selectedRegion||"outskirts";state.saveVersion="0.4.0";return state;
+  state.selectedRegion=state.selectedRegion||"outskirts";state.profileType=state.profileType||"player";state.worldUnlocked=Boolean(state.worldUnlocked);state.saveVersion="0.6.0";return state;
 }
 
 function saveGame(state){localStorage.setItem(SAVE_KEY,JSON.stringify(state));}

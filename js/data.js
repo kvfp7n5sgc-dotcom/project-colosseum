@@ -1,7 +1,8 @@
 const GAME_DATA = {
-  version:"0.4.0",
+  version:"0.6.0",
   energyRegenMs:1000,
   inventoryLimit:30,
+  gmInventoryLimit:250,
 
   rarities:{
     common:{name:"Zwykły",color:"#d0d0d0",multiplier:1,sellMultiplier:1,rank:1},
@@ -53,6 +54,32 @@ const GAME_DATA = {
     {id:"smallHeal",name:"Mała mikstura leczenia",kind:"consumable",effect:"heal",amount:35,price:35,description:"+35 punktów życia"},
     {id:"energyDrink",name:"Napój gladiatora",kind:"consumable",effect:"energy",amount:4,price:60,description:"+4 Wytrzymałości"},
     {id:"ragePotion",name:"Eliksir furii",kind:"consumable",effect:"damageBuff",amount:25,durationMs:600000,price:120,description:"+25% obrażeń przez 10 minut"}
+  ],
+
+
+  gmCatalog:[
+    {name:"Gladius Rekruta",slot:"weapon",type:"Broń",power:8,rarity:"common"},
+    {name:"Gladius Legionisty",slot:"weapon",type:"Broń",power:18,rarity:"rare"},
+    {name:"Ostrze Centuriona",slot:"weapon",type:"Broń",power:34,rarity:"epic"},
+    {name:"Miecz Cesarza",slot:"weapon",type:"Broń",power:60,rarity:"legendary"},
+    {name:"Skórzany Kaftan",slot:"armor",type:"Pancerz",power:7,rarity:"common"},
+    {name:"Pancerz Legionisty",slot:"armor",type:"Pancerz",power:17,rarity:"rare"},
+    {name:"Zbroja Pretorianina",slot:"armor",type:"Pancerz",power:32,rarity:"epic"},
+    {name:"Pancerz Marsa",slot:"armor",type:"Pancerz",power:58,rarity:"legendary"},
+    {name:"Hełm Rekruta",slot:"helmet",type:"Hełm",power:6,rarity:"common"},
+    {name:"Hełm Centuriona",slot:"helmet",type:"Hełm",power:15,rarity:"rare"},
+    {name:"Hełm Areny",slot:"helmet",type:"Hełm",power:29,rarity:"epic"},
+    {name:"Korona Wojny",slot:"helmet",type:"Hełm",power:52,rarity:"legendary"},
+    {name:"Drewniana Tarcza",slot:"shield",type:"Tarcza",power:5,rarity:"common"},
+    {name:"Tarcza Legionu",slot:"shield",type:"Tarcza",power:14,rarity:"rare"},
+    {name:"Egida Vallis",slot:"shield",type:"Tarcza",power:28,rarity:"epic"},
+    {name:"Mur Tytanów",slot:"shield",type:"Tarcza",power:50,rarity:"legendary"},
+    {name:"Mikstura pełnego leczenia",kind:"consumable",effect:"heal",amount:9999,rarity:"rare"},
+    {name:"Napój nieskończonej wytrzymałości",kind:"consumable",effect:"energy",amount:999,rarity:"epic"},
+    {name:"Eliksir mocy Game Mastera",kind:"consumable",effect:"damageBuff",amount:100,durationMs:3600000,rarity:"legendary"},
+    {name:"Kieł Fenrira",slot:"weapon",type:"Broń",power:40,rarity:"epic"},
+    {name:"Amulet Alfy",slot:null,type:"Relikt",power:25,rarity:"epic"},
+    {name:"Pieczęć Game Mastera",slot:null,type:"Relikt",power:100,rarity:"legendary"}
   ],
 
   dialogues:{

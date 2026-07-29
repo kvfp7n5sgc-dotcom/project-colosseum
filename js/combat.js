@@ -5,7 +5,7 @@ function createLootItem(drop){
   return {id:makeId(),name:drop.name,slot:drop.slot,type:drop.type,rarity,rarityName:rd.name,color:rd.color,power:Math.max(1,Math.round(base*rd.multiplier)),durability:100,kind:drop.slot?"equipment":"trophy"};
 }
 function addItemToInventory(state,item){
-  if(state.inventory.length>=GAME_DATA.inventoryLimit)return false;
+  if(state.inventory.length>=(state.profileType==="gm"?GAME_DATA.gmInventoryLimit:GAME_DATA.inventoryLimit))return false;
   state.inventory.push(item);return true;
 }
 function runCombat(state,enemy){
@@ -26,7 +26,7 @@ function runCombat(state,enemy){
     const found=[];
     enemy.drops.forEach(drop=>{if(Math.random()<drop.chance){const item=createLootItem(drop);if(addItemToInventory(state,item)){found.push(item);state.chronicle.unshift(`Zdobyłeś ${item.rarityName.toLowerCase()} przedmiot „${item.name}”.`);}}});
     applyLevelUps(state);
-    const lootText=found.length?` Zdobyto: ${found.map(i=>`${i.rarityName} ${i.name}`).join(", ")}.`:(state.inventory.length>=GAME_DATA.inventoryLimit?" Plecak jest pełny.":" Brak dodatkowego łupu.");
+    const lootText=found.length?` Zdobyto: ${found.map(i=>`${i.rarityName} ${i.name}`).join(", ")}.`:(state.inventory.length>=(state.profileType==="gm"?GAME_DATA.gmInventoryLimit:GAME_DATA.inventoryLimit)?" Plecak jest pełny.":" Brak dodatkowego łupu.");
     return{ok:true,title:enemy.boss?"Boss pokonany":"Zwycięstwo",summary:`Zdobywasz ${enemy.xp} XP i ${gold} złota.${lootText}`,log};
   }
   state.hp=Math.ceil(state.maxHp*.35);state.chronicle.unshift(`Zostałeś pokonany przez: ${enemy.name}.`);
