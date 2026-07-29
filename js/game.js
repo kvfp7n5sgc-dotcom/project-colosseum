@@ -21,29 +21,27 @@ function renderHeader(){
   const phaseBadge=$("worldPhaseBadge");if(phaseBadge){phaseBadge.textContent=state.worldPhase==="night"?"NOC":"DZIEŃ";phaseBadge.classList.toggle("night",state.worldPhase==="night");}
   $("levelValue").textContent=state.level;$("goldValue").textContent=state.gold;$("energyValue").textContent=state.energy;$("maxEnergyValue").textContent=state.maxEnergy;$("hpValue").textContent=state.hp;$("maxHpValue").textContent=state.maxHp;$("xpLabel").textContent=`${state.xp} / ${state.xpNext}`;$("xpBar").style.width=`${Math.min(100,state.xp/state.xpNext*100)}%`;$("regenLabel").textContent=state.energy>=state.maxEnergy?"pełna":"1 punkt za sekundę";}
 function isRegionUnlocked(region){return state.profileType==="gm"||state.worldUnlocked||state.level>=region.unlockLevel;}
+function expeditionRegions(){return typeof EXPEDITION_DATA!=="undefined"?EXPEDITION_DATA.regions:GAME_DATA.regions;}
+function expeditionEnemies(){return typeof EXPEDITION_DATA!=="undefined"?EXPEDITION_DATA.enemies:GAME_DATA.enemies;}
+function regionWins(regionId){return expeditionEnemies().filter(e=>e.region===regionId&&!e.boss).reduce((sum,e)=>sum+(state.kills[e.id]||0),0);}
+function bossUnlocked(regionId){const regular=expeditionEnemies().filter(e=>e.region===regionId&&!e.boss);return state.profileType==="gm"||(regular.every(e=>(state.kills[e.id]||0)>0)&&regionWins(regionId)>=10);}
 function renderWorld(){
-  const map=$("worldMap");if(!map)return;
-  map.innerHTML=GAME_DATA.regions.map((r,index)=>`<article class="world-node route-node node-${index+1} ${state.selectedRegion===r.id?"active":""} ${isRegionUnlocked(r)?"":"locked"}" data-region-card="${r.id}">
-    <span class="node-number">${index+1}</span><span class="node-status">${isRegionUnlocked(r)?"ODKRYTO":"🔒"}</span><h3>${r.name}</h3><p>${r.description}</p><small>Poziom ${r.unlockLevel}+</small>
-    ${isRegionUnlocked(r)?`<button class="item-btn primary" data-region="${r.id}">Wyrusz</button>`:""}
-  </article>`).join("");
+  const map=$("worldMap");if(!map)return;const regions=expeditionRegions();
+  map.innerHTML=regions.map((r,index)=>{const unlocked=isRegionUnlocked(r);const wins=regionWins(r.id);return`<article class="continent-location theme-${r.theme} ${state.selectedRegion===r.id?"active":""} ${unlocked?"":"locked"}">
+    <div class="location-art"><span>${r.icon}</span><b>${index+1}</b></div><div class="location-copy"><span class="location-kicker">${r.subtitle}</span><h3>${r.name}</h3><p>${r.description}</p><div class="location-meta"><span>Poziom ${r.unlockLevel}+</span><span>${wins} zwycięstw</span></div>${unlocked?`<button class="primary-btn" data-region="${r.id}">Wejdź do lokacji</button>`:`<button class="primary-btn" disabled>🔒 Wymagany poziom ${r.unlockLevel}</button>`}</div>
+  </article>`}).join("");
   document.querySelectorAll("[data-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.region;persistAndRender();showView("expeditions");});
 }
 function renderEnemies(){
-  const region=GAME_DATA.regions.find(r=>r.id===state.selectedRegion);
-  const expeditionTitle=document.querySelector("#view-expeditions h2");
-  if(expeditionTitle)expeditionTitle.textContent=region?`Wyprawy — ${region.name}`:"Wyprawy";
-  const strip=$("expeditionRegionStrip");if(strip){strip.innerHTML=GAME_DATA.regions.map(r=>`<button class="region-chip ${r.id===state.selectedRegion?"active":""}" data-quick-region="${r.id}" ${isRegionUnlocked(r)?"":"disabled"}>${r.name}</button>`).join("");document.querySelectorAll("[data-quick-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.quickRegion;persistAndRender();});}
-  const enemies=GAME_DATA.enemies.filter(e=>e.region===state.selectedRegion);
-  $("enemyList").innerHTML=enemies.map(e=>`<article class="enemy-card ${e.boss?"boss-card":""}"><h3>${e.name}</h3><div class="enemy-meta">Życie: ${e.hp}<br>Atak: ${e.attack}<br>Nagroda: ${e.xp} XP, ${e.gold[0]}–${e.gold[1]} złota</div><span class="danger">${e.danger}</span><br><button class="fight-btn" data-enemy="${e.id}">Walcz</button></article>`).join("")||`<p class="small">Brak dostępnych przeciwników.</p>`;
-  document.querySelectorAll("[data-enemy]").forEach(b=>b.onclick=()=>{const enemy=GAME_DATA.enemies.find(e=>e.id===b.dataset.enemy);const beforeGold=state.gold,beforeXp=state.xp;const result=runCombat(state,enemy);
-      if(result.victory){
-        const goldBonus=Math.max(0,Math.round((state.gold-beforeGold)*(mountRewardMultiplier()-1)));
-        const xpBonus=Math.max(0,Math.round((state.xp-beforeXp)*(estateXpMultiplier()-1)));
-        state.gold+=goldBonus;state.xp+=xpBonus;
-        if(state.worldPhase==="night"){state.gold+=Math.round((state.gold-beforeGold)*.08);}
-      }
-      $("battleReport").classList.remove("hidden");$("battleReport").innerHTML=`<strong>${result.title}</strong><p>${result.summary}</p>${result.log.length?`<details><summary>Przebieg walki</summary><ol>${result.log.map(x=>`<li>${x}</li>`).join("")}</ol></details>`:""}`;persistAndRender();});
+  const regions=expeditionRegions(),allEnemies=expeditionEnemies();let region=regions.find(r=>r.id===state.selectedRegion);
+  if(!region){state.selectedRegion=regions[0].id;region=regions[0];}
+  const title=document.querySelector("#view-expeditions h2");if(title)title.textContent=region.name;
+  const intro=document.querySelector("#view-expeditions .expedition-zone-head p:last-child");if(intro)intro.textContent=region.description;
+  const strip=$("expeditionRegionStrip");if(strip){strip.innerHTML=regions.map(r=>`<button class="region-chip ${r.id===state.selectedRegion?"active":""}" data-quick-region="${r.id}" ${isRegionUnlocked(r)?"":"disabled"}>${r.icon} ${r.name}</button>`).join("");document.querySelectorAll("[data-quick-region]").forEach(b=>b.onclick=()=>{state.selectedRegion=b.dataset.quickRegion;persistAndRender();});}
+  const enemies=allEnemies.filter(e=>e.region===state.selectedRegion),wins=regionWins(region.id),bossOpen=bossUnlocked(region.id);
+  const progress=`<div class="boss-progress panel"><div><span>Postęp lokacji</span><strong>${Math.min(10,wins)}/10 zwycięstw</strong></div><div class="boss-progress-track"><i style="width:${Math.min(100,wins*10)}%"></i></div><small>Boss odblokuje się po pokonaniu każdego zwykłego przeciwnika przynajmniej raz i zdobyciu 10 zwycięstw.</small></div>`;
+  $("enemyList").innerHTML=progress+enemies.map((e,i)=>{const locked=e.boss&&!bossOpen,kills=state.kills[e.id]||0;return`<article class="expedition-enemy-card palette-${e.palette} ${e.boss?"boss-card":""} ${locked?"locked":""}"><div class="enemy-portrait"><span>${e.symbol}</span><em>${e.boss?"BOSS":String(i+1).padStart(2,"0")}</em></div><div class="enemy-content"><span class="enemy-title">${e.title}</span><h3>${e.name}</h3><div class="enemy-stat-row"><span>❤️ ${e.hp}</span><span>⚔️ ${e.attack}</span><span>🏆 ${kills}</span></div><p>Nagroda: <strong>${e.xp} XP</strong> · ${e.gold[0]}–${e.gold[1]} złota</p><button class="fight-btn" data-enemy="${e.id}" ${locked?"disabled":""}>${locked?"🔒 Boss zablokowany":e.boss?"Rzuć wyzwanie bossowi":"Walcz — 1 wytrzymałość"}</button></div></article>`}).join("");
+  document.querySelectorAll("[data-enemy]").forEach(b=>b.onclick=()=>{const enemy=allEnemies.find(e=>e.id===b.dataset.enemy);if(!enemy)return;const beforeGold=state.gold,beforeXp=state.xp;const result=runCombat(state,enemy);if(result.ok&&result.title!=="Porażka"){const goldBonus=Math.max(0,Math.round((state.gold-beforeGold)*(mountRewardMultiplier()-1))),xpBonus=Math.max(0,Math.round((state.xp-beforeXp)*(estateXpMultiplier()-1)));state.gold+=goldBonus;state.xp+=xpBonus;if(state.worldPhase==="night")state.gold+=Math.round((state.gold-beforeGold)*.08);}$("battleReport").classList.remove("hidden");$("battleReport").innerHTML=`<strong>${result.title}</strong><p>${result.summary}</p>${result.log.length?`<details><summary>Przebieg walki</summary><ol>${result.log.map(x=>`<li>${x}</li>`).join("")}</ol></details>`:""}`;persistAndRender();});
 }
 function renderStats(){
   $("statsList").innerHTML=Object.entries(state.stats).map(([k,v])=>`<div class="stat-row"><span>${GAME_DATA.statLabels[k]}</span><div class="stat-actions"><strong>${v}</strong><button data-stat="${k}" ${state.statPoints<1?"disabled":""}>+</button></div></div>`).join("");
