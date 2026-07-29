@@ -1,10 +1,3 @@
-# Project Colosseum v0.12.0 — Rysowane Vallis
+# Project Colosseum v0.12.1
 
-Nowa ręcznie rysowana mapa miasta z bezpośrednio klikalnymi budynkami.
-
-## Skopiuj do projektu
-- `css/`
-- `assets/`
-- `index.html`
-
-Folder `js/` nie został zmieniony.
+Mobilna wersja z dużym Vallis i działającym dolnym paskiem nawigacji.

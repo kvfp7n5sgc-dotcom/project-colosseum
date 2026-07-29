@@ -1,17 +1,15 @@
-PROJECT COLOSSEUM v0.12.0 — RYSOWANE VALLIS
+PROJECT COLOSSEUM v0.12.1 — DUŻE MIASTO I DOLNE MENU
 
-NOWOŚCI:
-- nowa, ostra, ręcznie rysowana mapa Vallis,
-- duże budynki stworzone specjalnie do klikania,
-- brak okrągłych ikon i stałych napisów na mapie,
-- niewidzialne pola dotyku ustawione bezpośrednio na budynkach,
-- podświetlenie i nazwa pojawiają się tylko podczas dotknięcia,
-- proporcje mapy dopasowane do telefonu.
+Skopiuj i podmień:
+- index.html
+- css/
+- js/
 
-SKOPIUJ:
-- folder css/
-- folder assets/
-- plik index.html
+Folder assets/ nie zmienił się.
 
-NIE MUSISZ KOPIOWAĆ:
-- folder js/
+Zmiany:
+- Vallis jest dużo większe i można przesuwać mapę poziomo na telefonie.
+- usunięto górny rząd przycisków nawigacji.
+- nowe dolne menu działa: Miasto, Mapa, Wyprawy, Gladiatorzy, Zadania, Sklep, Więcej.
+- Więcej otwiera pozostałe systemy gry.
+- na telefonie ukryto część paneli pod miastem, aby mapa zajmowała większą część ekranu.
